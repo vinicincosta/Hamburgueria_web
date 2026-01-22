@@ -1220,3 +1220,104 @@ main {
     background: #1e88e5;
     transform: translateY(-2px);
 }
+/* Layout html insumos*/
+/* CONTAINER PRINCIPAL */
+.insumos-container {
+    padding: 30px;
+    width: 100%;
+    max-width: 1400px;   /* controla a largura máxima */
+    margin: 0 auto;      /* centraliza o conteúdo */
+    box-sizing: border-box;
+}
+
+/* GRID DE CARDS */
+.insumos-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* CARD */
+.insumo-card {
+    background-color: #ffffff;
+    color: #1f2933;
+    border-radius: 12px;
+    padding: 18px;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.insumo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.3);
+}
+
+/* TOPO DO CARD */
+.insumo-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.insumo-id {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #6b7280;
+}
+
+/* TEXTOS */
+.insumo-nome {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+.insumo-info {
+    font-size: 0.95rem;
+    color: #374151;
+    margin: 4px 0;
+}
+
+/* BOTÕES */
+.btn-editar {
+    background-color: #a30000;
+    color: #ffffff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.btn-editar:hover {
+    background-color: #7a0000;
+}
+
+/* PAGINAÇÃO FIXA */
+.paginacao-fixa {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 999;
+}
+
+/* BOTÃO DESABILITADO */
+.animated-button.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* RESPONSIVO */
+@media (max-width: 600px) {
+    .insumos-container {
+        padding: 15px;
+    }
+}
