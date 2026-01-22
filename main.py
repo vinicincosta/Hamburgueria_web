@@ -218,17 +218,28 @@ def categorias():
     retorno = verificar_token()
     if retorno:
         return retorno
-    if session['papel'] == "cliente" or session['papel'] == "garcom":
+
+    if session['papel'] in ['cliente', 'garcom']:
         flash('Você não tem acesso, entre com uma conta autorizada', 'info')
-        return redirect(url_for(session['funcao_rota_anterior']))
+        return redirect(url_for(session.get('funcao_rota_anterior', 'inicio')))
+
     var_categorias = routes_web.get_categorias(session['token'])
 
     if 'categorias' not in var_categorias:
         flash('Parece que algo ocorreu errado :/', 'error')
-        return redirect(url_for(session['funcao_rota_anterior']))
-    exibir_tabela = request.args.get('exibir_tabela', False)
+        return redirect(url_for(session.get('funcao_rota_anterior', 'inicio')))
+
+    # checkbox: se existir no GET → True
+    exibir_tabela = request.args.get('exibir_tabela') == 'on'
+
     session['funcao_rota_anterior'] = 'categorias'
-    return render_template('categorias.html', lanches=var_categorias['categorias'], exibir_tabela=not exibir_tabela)
+
+    return render_template(
+        'categorias.html',
+        categorias=var_categorias['categorias'],
+        exibir_tabela=exibir_tabela
+    )
+
 
 @app.route('/pedidos', methods=['GET'])
 def pedidos():
@@ -559,46 +570,77 @@ def cadastrar_insumos():
         return redirect(url_for('insumos'))
 
 
-@app.route('/entradas/cadastrar_entradas', methods=['POST', 'GET'])
+@app.route('/entradas/cadastrar', methods=['GET', 'POST'])
 def cadastrar_entradas():
     retorno = verificar_token()
     if retorno:
         return retorno
-    if session['papel'] != "admin":
-        flash('Você não tem acesso, entre com uma conta autorizada', 'info')
-        return redirect(url_for(session['funcao_rota_anterior']))
-    if request.method == 'POST':
-        qtd_entrada = request.form['qtd_entradas']
-        insumo_id = request.form['insumo_id']
-        bebida_id = request.form['bebida_id']
-        data_entrada = datetime.datetime.now()
-        nota_fiscal = request.form['nota_fiscal']
-        valor_entrada = request.form['valor_entrada']
 
-        if not nota_fiscal or not valor_entrada or not qtd_entrada:
+    if session.get('papel') != "admin":
+        flash('Você não tem acesso, entre com uma conta autorizada', 'info')
+        return redirect(url_for(session.get('funcao_rota_anterior', 'entradas')))
+
+    if request.method == 'POST':
+        qtd_entrada = request.form.get('qtd_entradas')
+        insumo_id = request.form.get('insumo_id')
+        bebida_id = request.form.get('bebida_id')
+        valor_entrada = request.form.get('valor_entrada')
+        nota_fiscal = request.form.get('nota_fiscal')
+        data_entrada = datetime.datetime.now()
+
+        # validação básica
+        if not qtd_entrada or not valor_entrada or not nota_fiscal:
             flash('Preencha todos os campos', 'error')
             return redirect(url_for('cadastrar_entradas'))
-        if not bebida_id and not insumo_id:
-            flash('Preencha todos os campos', 'error')
+
+        # deve escolher insumo OU bebida
+        if not insumo_id and not bebida_id:
+            flash('Selecione um insumo ou uma bebida', 'error')
             return redirect(url_for('cadastrar_entradas'))
+
+        data_entrada = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
         if insumo_id:
-            salvar_entrada = routes_web.post_entradas_insumos(session['token'], qtd_entrada, insumo_id, data_entrada, nota_fiscal, valor_entrada)
+            salvar_entrada = routes_web.post_entradas_insumos(
+                session['token'],
+                insumo_id,
+                qtd_entrada,
+                data_entrada,
+                nota_fiscal,
+                valor_entrada
+            )
         else:
-            salvar_entrada = routes_web.post_entradas_bebidas(session['token'], qtd_entrada, bebida_id, data_entrada, nota_fiscal, valor_entrada)
+            salvar_entrada = routes_web.post_entradas_bebidas(
+                session['token'],
+                bebida_id,
+                qtd_entrada,
+                data_entrada,
+                nota_fiscal,
+                valor_entrada
+            )
 
         if 'success' in salvar_entrada:
             flash('Entrada adicionada com sucesso', 'success')
             return redirect(url_for('entradas'))
 
+        flash('Erro ao cadastrar entrada', 'error')
         return redirect(url_for('cadastrar_entradas'))
-    else:
-        insumos = routes_web.get_insumos(session['token'])
-        bebidas = routes_web.get_bebidas(session['token'])
-        if 'insumos' in insumos and 'bebidas' in bebidas:
-            session['funcao_rota_anterior'] = 'cadastrar_entradas'
-            return render_template('cadastrar_entradas.html', insumos=insumos['insumos'], bebidas=bebidas['bebidas'])
-        flash('Parece que algo ocorreu errado', 'error')
-        return redirect(url_for('entradas'))
+
+    # GET
+    insumos = routes_web.get_insumos(session['token'])
+    bebidas = routes_web.get_bebidas(session['token'])
+
+    if 'insumos' in insumos and 'bebidas' in bebidas:
+        session['funcao_rota_anterior'] = 'cadastrar_entradas'
+        return render_template(
+            'cadastrar_entradas.html',
+            insumos=insumos['insumos'],
+            bebidas=bebidas['bebidas']
+        )
+
+    flash('Parece que algo ocorreu errado', 'error')
+    return redirect(url_for('entradas'))
+
 
 @app.route('/categorias/cadastrar', methods=['POST', 'GET'])
 def cadastrar_categorias():
@@ -905,29 +947,53 @@ def editar_pessoa(id_pessoa):
 #         # Tenta redirecionar para a rota anterior, usando o 'index' como fallback final.
 #         return redirect(url_for(session.get('funcao_rota_anterior', 'index')))
 
-@app.route('/categorias/editar<id_categoria>', methods=['GET', 'POST'])
+@app.route('/categorias/editar/<int:id_categoria>', methods=['GET', 'POST'])
 def editar_categoria(id_categoria):
     try:
         retorno = verificar_token()
         if retorno:
             return retorno
-        if session['papel'] != "admin":
+
+        if session.get('papel') != "admin":
             flash('Você não tem acesso, entre com uma conta autorizada', 'info')
-            return redirect(url_for(session['funcao_rota_anterior']))
-        categoria = routes_web.get_categoria_by_id_categoria(session['token'], id_categoria)
-        categoria = categoria['categoria']
+            return redirect(url_for(session.get('funcao_rota_anterior', 'categorias')))
+
+        categoria_resp = routes_web.get_categoria_by_id_categoria(
+            session['token'],
+            id_categoria
+        )
+
+        categoria = categoria_resp['categoria']
+
         if request.method == 'POST':
             nome = request.form.get('nome_categoria')
 
-            routes_web.put_editar_categoria(session['token'], id_categoria, nome)
-        else:
-            session['funcao_rota_anterior'] = 'categorias'
-            return render_template('editar_categoria.html', categoria=categoria)
+            if not nome:
+                flash('Nome não pode ser vazio', 'error')
+                return redirect(
+                    url_for('editar_categoria', id_categoria=id_categoria)
+                )
+
+            routes_web.put_editar_categoria(
+                session['token'],
+                id_categoria,
+                nome
+            )
+
+            flash('Categoria editada com sucesso', 'success')
+            return redirect(url_for('categorias'))
+
+        # GET
+        session['funcao_rota_anterior'] = 'categorias'
+        return render_template(
+            'editar_categoria.html',
+            categoria=categoria
+        )
 
     except Exception as erro:
         print(erro)
         flash('Parece que algo deu errado', 'error')
-        return redirect(url_for(session['funcao_rota_anterior']))
+        return redirect(url_for(session.get('funcao_rota_anterior', 'categorias')))
 
 @app.route('/insumos/editar<id_insumo>', methods=['GET', 'POST'])
 def editar_insumo(id_insumo):

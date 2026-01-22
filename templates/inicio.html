@@ -38,11 +38,13 @@
             <a href="{{ url_for('pessoas') }}">FUNCIONÁRIOS</a>
             <a href="{{ url_for('cadastrar_pessoas') }}">CADASTRAR FUNCIONÁRIOS</a>
             <a href="{{url_for('entradas')}}">ENTRADAS</a>
-            <a href="{{('cadastrar_entradas')}}"> CADASTRAR ENTRADAS</a>
+            <a href="{{url_for('cadastrar_entradas')}}">CADASTRAR ENTRADAS</a>
             <a href="{{url_for('vendas')}}">VENDAS</a>
             <a href="{{url_for('cadastrar_lanche_insumos')}}">CADASTRAR RECEITA</a>
             <a href="{{url_for('lanche_insumos')}}">RECEITA</a>
             <a href="{{url_for('cadastrar_lanches')}}"> LANCHES </a>
+            <a href="{{url_for('cadastrar_insumos')}}"> CADASTRAR INSUMOS </a>
+            <a href="{{url_for('categorias')}}"> CATEGORIAS</a>
 
             {% endif %}
             <a href="{{url_for('pedidos')}}">PEDIDOS</a>

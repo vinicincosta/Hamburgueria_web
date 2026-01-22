@@ -1,18 +1,49 @@
 {% extends 'inicio.html' %}
 {% block content %}
-<!--<div></div>-->
-<!-- From Uiverse.io by ammarsaa -->
-<div class="div_pai_cadastrar_pessoa">
-    <form class="form" method="post" action="{{ url_for('editar_categoria') }}">
-        <p class="title">Register </p>
-        <p class="message">Editar Insumo </p>
-        <label>
-            <input name="nome_categoria" value="{{categoria['nome_categoria']}}" class="inputt" type="text" placeholder="" required>
-            <span>Nome:</span>
-        </label>
-        <button class="submit">Salvar</button>
-        <a href="{{url_for('categorias')}}">Cancelar</a>
 
-    </form>
-</div>
+<main class="editar-categoria-container">
+
+    <div class="editar-categoria-card">
+
+        <!-- CABEÇALHO -->
+        <div class="editar-categoria-header">
+            <h2>Editar Categoria</h2>
+            <p>Altere o nome da categoria abaixo</p>
+        </div>
+
+        <!-- FORMULÁRIO -->
+        <form
+            class="editar-categoria-form"
+            method="post"
+            action="{{ url_for('editar_categoria', id_categoria=categoria['id_categoria']) }}"
+        >
+
+            <div class="form-group">
+                <label for="nome_categoria">Nome da Categoria</label>
+                <input
+                    id="nome_categoria"
+                    name="nome_categoria"
+                    value="{{ categoria['nome_categoria'] }}"
+                    type="text"
+                    required
+                >
+            </div>
+
+            <!-- AÇÕES -->
+            <div class="form-actions">
+                <a href="{{ url_for('categorias') }}" class="btn-cancelar">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="btn-salvar">
+                    Salvar Alterações
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
+
 {% endblock %}

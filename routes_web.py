@@ -2,7 +2,7 @@ from logging import exception
 
 import requests
 
-url = "http://192.168.0.181:5002"
+url = "http://192.168.0.81:5002"
 
 
 def get_bebidas(token_):
