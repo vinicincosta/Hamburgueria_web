@@ -1,28 +1,49 @@
 {% extends 'inicio.html' %}
 {% block content %}
-<!--<div></div>-->
-<!-- From Uiverse.io by ammarsaa -->
+
 <div class="div_pai_cadastrar_pessoa">
-    <form class="form" method="post" action="{{ url_for('editar_insumo') }}">
-        <p class="title">Register </p>
-        <p class="message">Editar Insumo </p>
+    <form class="form"
+          method="post"
+          action="{{ url_for('editar_insumo', id_insumo=insumo['id_insumo']) }}">
+
+        <p class="title">Editar</p>
+        <p class="message">Editar Insumo</p>
+
         <label>
-            <input name="nome_insumo" value="{{insumo['nome_insumo']}}" class="inputt" type="text" placeholder="" required>
-            <span>Nome:</span>
+            <input
+                    name="nome_insumo"
+                    value="{{ insumo['nome_insumo'] }}"
+                    class="inputt"
+                    type="text"
+                    required
+            >
+            <span>Nome</span>
         </label>
-        <label>
-            <select name="categoria_id" class="inputt">
-                {% for c in categorias %}
-                    {% if insumo['categoria_id'] == c['id_categoria'] %}
-                        <option value="{{c['id_categoria']}}" selected>{{c['nome_categoria']}}</option>
-                    {% else %}
-                        <option value="{{c['id_categoria']}}">{{c['nome_categoria']}}</option>
-                    {% endif %}
+
+        <label class="custom-select-label">
+            <select class="input custom-select" name="categoria_id" required>
+                <option value="" disabled>Selecione uma categoria</option>
+
+                {% for categoria in categorias %}
+                <option
+                        value="{{ categoria.id_categoria }}"
+                        {% if categoria.id_categoria== insumo[
+                'categoria_id'] %}
+                selected
+                {% endif %}
+                >
+                {{ categoria.nome_categoria }}
+                </option>
+                {% endfor %}
             </select>
+            <span>Categoria</span>
         </label>
+
+
         <button class="submit">Salvar</button>
-        <a href="{{url_for('insumos')}}">Cancelar</a>
+        <a href="{{ url_for('insumos') }}">Cancelar</a>
 
     </form>
 </div>
+
 {% endblock %}

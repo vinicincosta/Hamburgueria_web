@@ -2,7 +2,7 @@ from logging import exception
 
 import requests
 
-url = "http://192.168.0.81:5002"
+url = "http://192.168.0.96:5002"
 
 
 def get_bebidas(token_):
@@ -140,15 +140,20 @@ def get_categoria_by_id_categoria(token_, id_categoria): # Feito
         print(response.json())
         return {'erro':response.status_code}
 
-def get_insumo_by_id_insumo(token_, id_insumo): # Feito
+def get_insumo_by_id_insumo(token_, id_insumo):
     base_url = f"{url}/get_insumo_id/{id_insumo}"
-    response = requests.get(base_url, headers={'Authorization': f'Bearer {token_}'})
+    response = requests.get(
+        base_url,
+        headers={'Authorization': f'Bearer {token_}'}
+    )
+
     if response.status_code == 200:
         return response.json()
-    else:
-        print(response.status_code)
-        print(response.json())
-        return {'erro':response.status_code}
+
+    print('STATUS:', response.status_code)
+    print('TEXT:', response.text)
+    return {'erro': response.status_code}
+
 
 def get_id_pessoa_by_token(token_):
     response = requests.get(f"{url}/teste", headers={'Authorization': f'Bearer {token_}'})
@@ -349,16 +354,25 @@ def put_editar_lanche(token_, id_lanche, nome_lanche, descricao_lanche, valor_la
         return {'erro':response.status_code}
 
 def put_editar_insumo(token_, id_insumo, nome_insumo, categoria_id):
-    response = requests.put(f"{url}/insumos/{id_insumo}", json={
-        "nome_insumo":nome_insumo,
-        "categoria_id":categoria_id,
-    }, headers={'Authorization': f'Bearer {token_}'})
-    if response.status_code == 200:
+    response = requests.put(
+        f"{url}/insumos/{id_insumo}",
+        json={
+            "nome_insumo": nome_insumo,
+            "categoria_id": categoria_id,
+        },
+        headers={'Authorization': f'Bearer {token_}'}
+    )
+
+    if response.status_code in (200, 201):
         return response.json()
-    else:
-        print(response.status_code)
-        print(response.json())
-        return {'erro':response.status_code}
+
+    if response.status_code == 204:
+        return {"success": True}
+
+    print('STATUS:', response.status_code)
+    print('TEXT:', response.text)
+    return {'erro': response.status_code}
+
 
 def put_editar_categoria(token_, id_categoria, nome_categoria):
     response = requests.put(f"{url}/categorias/{id_categoria}", json={
