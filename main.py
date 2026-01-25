@@ -973,6 +973,8 @@ def editar_pessoa(id_pessoa):
 #         # Tenta redirecionar para a rota anterior, usando o 'index' como fallback final.
 #         return redirect(url_for(session.get('funcao_rota_anterior', 'index')))
 
+
+
 @app.route('/categorias/editar/<int:id_categoria>', methods=['GET', 'POST'])
 def editar_categoria(id_categoria):
     try:
