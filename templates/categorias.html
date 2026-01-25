@@ -1,18 +1,18 @@
 {% extends 'inicio.html' %}
 {% block content %}
 
-<main class="categorias-container">
+<main class="insumos-container">
 
     <!-- HEADER / AÇÕES -->
-    <div class="categorias-header">
-        <h2>Categorias</h2>
+    <div class="insumos-header">
+        <h2>Insumos</h2>
 
-        <div class="categorias-acoes">
-            <a href="{{ url_for('cadastrar_categorias') }}" class="btn-cadastrar">
-                + Cadastrar Categoria
+        <div class="insumos-acoes">
+            <a href="{{ url_for('cadastrar_insumo') }}" class="btn-cadastrar">
+                + Cadastrar Insumo
             </a>
 
-            <form method="get" action="{{ url_for('categorias') }}" class="toggle-form">
+            <form method="get" action="{{ url_for('insumos') }}" class="toggle-form">
                 <label class="toggle-label">
                     <input
                         type="checkbox"
@@ -28,45 +28,57 @@
 
     {% if not exibir_tabela %}
         <!-- VISUALIZAÇÃO EM CARDS -->
-        <div class="categorias-cards">
-            {% for c in categorias %}
-                <div class="categoria-card">
-                    <div class="categoria-topo">
-                        <span class="categoria-id">
-                            #{{ c['id_categoria'] }}
+        <div class="insumos-cards">
+            {% for i in insumos %}
+                <div class="insumo-card">
+                    <div class="insumo-topo">
+                        <span class="insumo-id">
+                            #{{ i['id_insumo'] }}
                         </span>
 
-                        <a href="{{ url_for('editar_categoria', id_categoria=c['id_categoria']) }}"
+                        <a href="{{ url_for('editar_insumo', id_insumo=i['id_insumo']) }}"
                            class="btn-editar">
                             Editar
                         </a>
                     </div>
 
-                    <h3 class="categoria-nome">
-                        {{ c['nome_categoria'] }}
+                    <h3 class="insumo-nome">
+                        {{ i['nome_insumo'] }}
                     </h3>
+
+                    <p class="insumo-info">
+                        Estoque: {{ i['qtd_insumo'] }}
+                    </p>
+
+                    <p class="insumo-info">
+                        Custo: R$ {{ i['custo_insumo'] }}
+                    </p>
                 </div>
             {% endfor %}
         </div>
 
     {% else %}
         <!-- VISUALIZAÇÃO EM TABELA -->
-        <div class="categorias-tabela-wrapper">
-            <table class="categorias-tabela">
+        <div class="insumos-tabela-wrapper">
+            <table class="insumos-tabela">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nome da Categoria</th>
+                        <th>Nome</th>
+                        <th>Qtd</th>
+                        <th>Custo</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for c in categorias %}
+                    {% for i in insumos %}
                         <tr>
-                            <td>{{ c['id_categoria'] }}</td>
-                            <td>{{ c['nome_categoria'] }}</td>
+                            <td>{{ i['id_insumo'] }}</td>
+                            <td>{{ i['nome_insumo'] }}</td>
+                            <td>{{ i['qtd_insumo'] }}</td>
+                            <td>R$ {{ i['custo_insumo'] }}</td>
                             <td>
-                                <a href="{{ url_for('editar_categoria', id_categoria=c['id_categoria']) }}"
+                                <a href="{{ url_for('editar_insumo', id_insumo=i['id_insumo']) }}"
                                    class="btn-editar">
                                     Editar
                                 </a>
