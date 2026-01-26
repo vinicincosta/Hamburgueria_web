@@ -149,10 +149,12 @@ def get_insumo_by_id_insumo(token_, id_insumo):
 
     if response.status_code == 200:
         return response.json()
+    else:
+        print(response.status_code)
+        print(response.json())
+        return {'erro': response.status_code}
 
-    print('STATUS:', response.status_code)
-    print('TEXT:', response.text)
-    return {'erro': response.status_code}
+
 
 
 def get_id_pessoa_by_token(token_):

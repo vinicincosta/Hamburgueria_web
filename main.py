@@ -15,12 +15,10 @@ def verificar_token():
         return redirect(url_for(session['funcao_rota_anterior']))
     return None
 
-
 @app.route('/')
 def index():
     session['funcao_rota_anterior'] = 'login'
     return render_template('inicio.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -170,50 +168,66 @@ def lanches():
     return render_template('lanches.html', lanches=var_lanches['lanches'], valor_=valor_, exibir=exibir)
 
 @app.route('/insumos', methods=['GET'])
-#@app.route('/insumos/<id_insumo>', methods=['GET'])
+@app.route('/insumos', methods=['GET'])
 def insumos():
     try:
         retorno = verificar_token()
         if retorno:
             return retorno
 
-        if session['papel'] == "cliente" or session['papel'] == "garcom":
+        if session['papel'] in ['cliente', 'garcom']:
             flash('Você não tem acesso, entre com uma conta autorizada', 'info')
-            return redirect(url_for(session['funcao_rota_anterior']))
-        
-        id_insumo = request.args.get('id_insumo', None)
-        form = request.args.get('form', None)
-        exibir_todos = request.args.get('exibir_todos', False)
-        exibir_tabela = request.args.get('exibir_tabela', False)
+            return redirect(url_for(session.get('funcao_rota_anterior', 'index')))
 
-        if id_insumo is None:
-            var_insumos = routes_web.get_insumos(session['token'])
+        # 🔹 PARÂMETROS
+        page = request.args.get('page', 1, type=int)
+        per_page = 4
 
+        id_insumo = request.args.get('id_insumo')
+
+        # 🔹 TOGGLE TABELA (checkbox)
+        exibir_tabela = request.args.get('exibir_tabela') == 'on'
+
+        # 🔹 BUSCA INSUMOS
+        if id_insumo:
+            retorno_insumos = routes_web.get_insumo_by_id_insumo(
+                int(id_insumo),
+                session['token']
+            )
+            lista_insumos = retorno_insumos.get('insumos', [])
         else:
-            #id_insumo = int(id_insumo)
-            var_insumos = routes_web.get_insumo_by_id_insumo(int(id_insumo), session['token'])
+            retorno_insumos = routes_web.get_insumos(session['token'])
+            lista_insumos = retorno_insumos.get('insumos', [])
 
-        if 'insumos' not in var_insumos:
-            flash('Parece que algo ocorreu errado :/', 'error')
-            return redirect(url_for(session['funcao_rota_anterior']))
-        if form is not None:
-            if form == 'exibir_todos':
-                if exibir_todos in ['False', False]:
-                    exibir_todos = True
-                else:
-                    exibir_todos = False
-            else:
-                if exibir_tabela in ['False', False]:
-                    exibir_tabela = True
-                else:
-                    exibir_tabela = False
-                    
+        if not lista_insumos:
+            flash('Nenhum insumo encontrado', 'info')
+            lista_insumos = []
+
+        # 🔹 PAGINAÇÃO
+        total = len(lista_insumos)
+        inicio = (page - 1) * per_page
+        fim = inicio + per_page
+
+        insumos_paginados = lista_insumos[inicio:fim]
+
+        has_prev = page > 1
+        has_next = fim < total
 
         session['funcao_rota_anterior'] = 'insumos'
-        return render_template('insumos.html', insumos=var_insumos['insumos'], exibir_todos=exibir_todos, exibir_tabela=exibir_tabela)
-    except ValueError:
+
+        return render_template(
+            'insumos.html',
+            insumos=insumos_paginados,
+            exibir_tabela=exibir_tabela,
+            page=page,
+            has_prev=has_prev,
+            has_next=has_next
+        )
+
+    except Exception as e:
+        print(e)
         flash('Parece que algo ocorreu errado :/', 'error')
-        return redirect(url_for(session['funcao_rota_anterior']))
+        return redirect(url_for(session.get('funcao_rota_anterior', 'index')))
 
 @app.route('/categorias', methods=['GET'])
 def categorias():
@@ -506,7 +520,7 @@ def cadastrar_pessoas():
         nome = request.form['Nome']
         email = request.form['Email']
         senha = request.form['Senha']
-        salario = request.form['salario']
+        salario = request.form['Salario']
         papel = request.form['Cargo']
 
         cadastrar = routes_web.post_cadastro_pessoas(session['token'], nome, cpf, email, senha, salario, papel)
@@ -997,32 +1011,70 @@ def editar_categoria(id_categoria):
         flash('Parece que algo deu errado', 'error')
         return redirect(url_for(session.get('funcao_rota_anterior', 'categorias')))
 
-@app.route('/insumos/editar<id_insumo>', methods=['GET', 'POST'])
+@app.route('/insumos/editar/<int:id_insumo>', methods=['GET', 'POST'])
 def editar_insumo(id_insumo):
+    print("aaaaaaaa")
     try:
         retorno = verificar_token()
         if retorno:
             return retorno
-        if session['papel'] != "admin":
-            flash('Você não tem acesso, entre com uma conta autorizada', 'info')
-            return redirect(url_for(session['funcao_rota_anterior']))
-        insumo = routes_web.get_insumo_by_id_insumo(session['token'], id_insumo)
-        insumo = insumo['insumo']
-        categorias = routes_web.get_categorias(session['token'])
+
+        if session.get('papel') != "admin":
+            flash('Você não tem acesso', 'error')
+            return redirect(url_for('insumos'))
+
+        # 🔹 INSUMO
+        insumo_resp = routes_web.get_insumo_by_id_insumo(
+            session['token'],
+            id_insumo
+        )
+
+        if 'id_insumo' not in insumo_resp:
+            print('RETORNO API:', insumo_resp)
+            flash('Insumo não encontrado', 'error')
+            return redirect(url_for('insumos'))
+
+        insumo = insumo_resp
+
+        # 🔹 CATEGORIAS
+        categorias_resp = routes_web.get_categorias(session['token'])
+        categorias = categorias_resp.get('categorias', [])
+
         if request.method == 'POST':
-            nome = request.form.get('nome_insumo')
+            nome_insumo = request.form.get('nome_insumo')
             categoria_id = request.form.get('categoria_id')
 
-            routes_web.put_editar_insumo(session['token'], id_insumo, nome, categoria_id)
-        else:
-            if 'insumo' in insumo and 'categorias' in categorias:
-                session['funcao_rota_anterior'] = 'editar_pessoa'
-                return render_template('editar_insumo.html', insumo=insumo, categorias=categorias)
-            raise RuntimeError
+            if not nome_insumo:
+                flash('Nome não pode ser vazio', 'error')
+                return redirect(url_for('editar_insumo', id_insumo=id_insumo))
+
+            if not categoria_id:
+                flash('Categoria não pode ser vazia', 'error')
+                return redirect(url_for('editar_insumo', id_insumo=id_insumo))
+
+            routes_web.put_editar_insumo(
+                session['token'],
+                id_insumo,
+                nome_insumo,
+                categoria_id
+            )
+
+            flash('Insumo editado com sucesso', 'success')
+            return redirect(url_for('insumos'))
+
+        session['funcao_rota_anterior'] = 'insumos'
+        return render_template(
+            'editar_insumo.html',
+            insumo=insumo,
+            categorias=categorias
+        )
+
     except Exception as erro:
-        print(erro)
+        print('ERRO EDITAR INSUMO:', erro)
         flash('Parece que algo deu errado', 'error')
-        return redirect(url_for(session['funcao_rota_anterior']))
+        return redirect(url_for('insumos'))
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

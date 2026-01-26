@@ -37,13 +37,11 @@
             {% if session['papel'] == 'admin' %}
             <a href="{{ url_for('pessoas') }}">FUNCIONÁRIOS</a>
             <a href="{{ url_for('cadastrar_pessoas') }}">CADASTRAR FUNCIONÁRIOS</a>
-            <a href="{{url_for('entradas')}}">ENTRADAS</a>
-            <a href="{{url_for('cadastrar_entradas')}}">CADASTRAR ENTRADAS</a>
+
             <a href="{{url_for('vendas')}}">VENDAS</a>
+
             <a href="{{url_for('cadastrar_lanche_insumos')}}">CADASTRAR RECEITA</a>
             <a href="{{url_for('lanche_insumos')}}">RECEITA</a>
-            <a href="{{url_for('cadastrar_lanches')}}"> LANCHES </a>
-            <a href="{{url_for('cadastrar_insumos')}}"> CADASTRAR INSUMOS </a>
 
 
             {% endif %}
@@ -64,14 +62,33 @@
         <!-- 🔥 ÍCONES CENTRALIZADOS -->
         <div class="header-center">
             <a href="{{ url_for('categorias') }}" class="header-item">
-                <img src="{{ url_for('static', filename='teste_categoria.png') }}">
+                <img src="{{ url_for('static', filename='categorias_hamburguer.png') }}">
                 <span>Categorias</span>
             </a>
 
             <a href="{{ url_for('insumos') }}" class="header-item">
-                <img src="{{ url_for('static', filename='insumos_png.jpg') }}">
+                <img src="{{ url_for('static', filename='insumos_hamburguer.png') }}">
                 <span>Insumos</span>
             </a>
+
+            <a href="{{ url_for('entradas') }}" class="header-item">
+                <img src="{{ url_for('static', filename='entradas_hamburguer.png') }}">
+                <span>Entradas</span>
+            </a>
+
+            <a href="{{ url_for('lanches') }}" class="header-item">
+                <img src="{{ url_for('static', filename='cardapio_hamburguer.png') }}">
+                <span>Cardápio</span>
+            </a>
+
+
+            <a href="{{ url_for('bebidas') }}" class="header-item">
+                <img src="{{ url_for('static', filename='bebidas_hamburguer.png') }}">
+                <span>Bebidas</span>
+            </a>
+
+
+
         </div>
     </div>
 

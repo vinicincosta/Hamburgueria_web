@@ -31,8 +31,13 @@
         <input name="Cargo" class="inputt" type="password" placeholder="" required="">
         <span>Cargo</span>
     </label>
-    <button class="submit">Logar</button>
-    <p class="signin">Já tem uma conta <a href="{{url_for('login')}}">Logar</a> </p>
+
+    <label>
+        <input name="Salario" class="inputt" type="number" placeholder="" required="">
+        <span>Salário</span>
+    </label>
+    <button class="submit">Cadastrar</button>
+    <p class="signin">Já tem uma conta <a href="{{url_for('cadastrar_pessoas')}}">Logar</a> </p>
 </form>
 </div>
 {% endblock %}

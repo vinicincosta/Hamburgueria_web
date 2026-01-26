@@ -1,49 +1,38 @@
 {% extends 'inicio.html' %}
 {% block content %}
 
-<div class="div_pai_cadastrar_pessoa">
-    <form class="form"
+<main class="form-container">
+    <form class="form-card"
           method="post"
           action="{{ url_for('editar_insumo', id_insumo=insumo['id_insumo']) }}">
 
-        <p class="title">Editar</p>
-        <p class="message">Editar Insumo</p>
+        <h2>Editar Insumo</h2>
 
         <label>
-            <input
-                    name="nome_insumo"
-                    value="{{ insumo['nome_insumo'] }}"
-                    class="inputt"
-                    type="text"
-                    required
-            >
-            <span>Nome</span>
+            <span>Nome do Insumo</span>
+            <input type="text" name="nome_insumo"
+                   value="{{ insumo['nome_insumo'] }}" required>
         </label>
 
-        <label class="custom-select-label">
-            <select class="input custom-select" name="categoria_id" required>
-                <option value="" disabled>Selecione uma categoria</option>
-
-                {% for categoria in categorias %}
-                <option
-                        value="{{ categoria.id_categoria }}"
-                        {% if categoria.id_categoria== insumo[
-                'categoria_id'] %}
-                selected
-                {% endif %}
-                >
-                {{ categoria.nome_categoria }}
-                </option>
+        <label>
+            <span>Categoria</span>
+            <select name="categoria_id" required>
+                <option value="">Selecione</option>
+                {% for c in categorias %}
+                    <option value="{{ c['id_categoria'] }}"
+                        {% if c['id_categoria'] == insumo['categoria_id'] %}selected{% endif %}>
+                        {{ c['nome_categoria'] }}
+                    </option>
                 {% endfor %}
             </select>
-            <span>Categoria</span>
         </label>
 
-
-        <button class="submit">Salvar</button>
-        <a href="{{ url_for('insumos') }}">Cancelar</a>
+        <div class="form-actions">
+            <button type="submit" class="btn-salvar">Salvar</button>
+            <a href="{{ url_for('insumos') }}" class="btn-cancelar">Cancelar</a>
+        </div>
 
     </form>
-</div>
+</main>
 
 {% endblock %}
