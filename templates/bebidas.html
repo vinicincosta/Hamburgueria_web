@@ -120,37 +120,37 @@
                     ➕ Cadastrar Bebida
                 </a>
 
-                <div class="search" role="search">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                              stroke-linejoin="round"/>
-                        <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    <input type="search" placeholder="Buscar bebida..." aria-label="Buscar bebida" id="searchInput"
-                           oninput="filterCards()">
-                </div>
+<!--                <div class="search" role="search">-->
+<!--                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>-->
+<!--                        <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"-->
+<!--                              stroke-linejoin="round"/>-->
+<!--                        <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/>-->
+<!--                    </svg>-->
+<!--                    <input type="search" placeholder="Buscar bebida..." aria-label="Buscar bebida" id="searchInput"-->
+<!--                           oninput="filterCards()">-->
+<!--                </div>-->
 
                 <!-- Exibir todos -->
-                <form method="get" action="{{url_for('bebidas')}}" class="switch">
-                    <input type="hidden" name="exibir_tabela" value="{{exibir_tabela}}">
-                    <input type="hidden" name="form" value="exibir_todos">
-                    <label for="exibir_todos">Todos</label>
-                    <input type="checkbox" name="todos" id="exibir_todos"
-                           onchange="this.form.submit()"
-                           {% if exibir_todos in ['True', True] %}checked{% endif %}>
-                    <span class="track"><span class="knob"></span></span>
-                </form>
+<!--                <form method="get" action="{{url_for('bebidas')}}" class="switch">-->
+<!--                    <input type="hidden" name="exibir_tabela" value="{{exibir_tabela}}">-->
+<!--                    <input type="hidden" name="form" value="exibir_todos">-->
+<!--                    <label for="exibir_todos">Todos</label>-->
+<!--                    <input type="checkbox" name="todos" id="exibir_todos"-->
+<!--                           onchange="this.form.submit()"-->
+<!--                           {% if exibir_todos in ['True', True] %}checked{% endif %}>-->
+<!--                    <span class="track"><span class="knob"></span></span>-->
+<!--                </form>-->
 
-                <!-- Exibir tabela -->
-                <form method="get" action="{{url_for('bebidas')}}" class="switch">
-                    <input type="hidden" name="exibir_todos" value="{{exibir_todos}}">
-                    <input type="hidden" name="form" value="exibir_tabela">
-                    <label for="exibir_tabela">Tabela</label>
-                    <input type="checkbox" name="tabela" id="exibir_tabela"
-                           onchange="this.form.submit()"
-                           {% if exibir_tabela in ['True', True] %}checked{% endif %}>
-                    <span class="track"><span class="knob"></span></span>
-                </form>
+<!--                &lt;!&ndash; Exibir tabela &ndash;&gt;-->
+<!--                <form method="get" action="{{url_for('bebidas')}}" class="switch">-->
+<!--                    <input type="hidden" name="exibir_todos" value="{{exibir_todos}}">-->
+<!--                    <input type="hidden" name="form" value="exibir_tabela">-->
+<!--                    <label for="exibir_tabela">Tabela</label>-->
+<!--                    <input type="checkbox" name="tabela" id="exibir_tabela"-->
+<!--                           onchange="this.form.submit()"-->
+<!--                           {% if exibir_tabela in ['True', True] %}checked{% endif %}>-->
+<!--                    <span class="track"><span class="knob"></span></span>-->
+<!--                </form>-->
 
             </div>
 
@@ -170,36 +170,19 @@
                            oninput="filterCards()">
                 </div>
 
-                <!-- Exibir todos (switch) -->
-                <form method="get" action="{{url_for('bebidas')}}" class="switch" title="Exibir itens desativados">
-                    <input type="hidden" name="exibir_tabela" value="{{exibir_tabela}}">
-                    <input type="hidden" name="form" value="exibir_todos">
-                    <label for="exibir_todos" style="font-size:13px;color:var(--muted)">Todos</label>
-                    <input type="checkbox" name="todos" id="exibir_todos" onchange="this.form.submit()" {% if
-                           exibir_todos in ['True', True] %}checked{% endif %}>
-                    <span class="track"><span class="knob"></span></span>
-                </form>
 
-                <!-- Exibir tabela (switch) -->
-                <form method="get" action="{{url_for('bebidas')}}" class="switch" title="Alternar tabela">
-                    <input type="hidden" name="exibir_todos" value="{{exibir_todos}}">
-                    <input type="hidden" name="form" value="exibir_tabela">
-                    <label for="exibir_tabela" style="font-size:13px;color:var(--muted)">Tabela</label>
-                    <input type="checkbox" name="tabela" id="exibir_tabela" onchange="this.form.submit()" {% if
-                           exibir_tabela in ['True', True] %}checked{% endif %}>
-                    <span class="track"><span class="knob"></span></span>
-                </form>
+
             </div>
         </div>
 
         <!-- FILTER CHIPS (opcional, visual only) -->
-        <div class="filters-row" style="margin-bottom:14px">
-            {% for c in categorias %}
-            <button class="filter-chip" type="button" onclick="filterByCategory('{{c['id_categoria']}}')">
-                {{c['nome_categoria']}}
-            </button>
-            {% endfor %}
-        </div>
+<!--        <div class="filters-row" style="margin-bottom:14px">-->
+<!--            {% for c in categorias %}-->
+<!--            <button class="filter-chip" type="button" onclick="filterByCategory('{{c['id_categoria']}}')">-->
+<!--                {{c['nome_categoria']}}-->
+<!--            </button>-->
+<!--            {% endfor %}-->
+<!--        </div>-->
 
         <!-- CARDS OR TABLE -->
         {% if exibir_tabela in ['False', False] %}

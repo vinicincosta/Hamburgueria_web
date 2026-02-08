@@ -7,33 +7,57 @@
         <p class="message">Cadastrar Entrada</p>
 
         <!-- Tipo -->
-        <label>
-            <label for="insumo">Insumo</label>
-            <input onclick="apareceInsumo()" id="insumo" name="tipo" type="radio" checked>
+        <div style="margin-bottom: 15px;">
+            <label>
+                <input
+                        type="radio"
+                        name="tipo"
+                        value="insumo"
+                        checked
+                        onclick="apareceInsumo()"
+                >
+                Insumo
+            </label>
 
-            <label for="bebida">Bebida</label>
-            <input onclick="apareceBebida()" id="bebida" name="tipo" type="radio">
-        </label>
+            <label style="margin-left: 15px;">
+                <input
+                        type="radio"
+                        name="tipo"
+                        value="bebida"
+                        onclick="apareceBebida()"
+                >
+                Bebida
+            </label>
+        </div>
 
         <!-- Insumo -->
-        <label id="insumoLabel">
-            <select name="insumo_id" class="inputt">
+        <div id="insumoLabel" class="campo">
+            <label for="insumo_id">Insumo</label>
+            <select name="insumo_id" id="insumo_id" class="inputt">
+                <option value="">Selecione um insumo</option>
                 {% for i in insumos %}
-                    <option value="{{ i['id_insumo'] }}">{{ i['nome_insumo'] }}</option>
+                <option value="{{ i['id_insumo'] }}">
+                    {{ i['nome_insumo'] }}
+                </option>
                 {% endfor %}
             </select>
-            <span>Insumo</span>
-        </label>
+        </div>
+
 
         <!-- Bebida -->
         <label id="bebidaLabel" style="display: none;">
-            <select name="bebida_id" class="inputt">
-                {% for b in bebidas %}
-                    <option value="{{ b['id_bebida'] }}">{{ b['nome_bebida'] }}</option>
-                {% endfor %}
-            </select>
-            <span>Bebida</span>
-        </label>
+    <select name="bebida_id" class="inputt">
+        <option value="" disabled selected>Selecione uma bebida</option>
+        {% for b in bebidas %}
+            <option value="{{ b['id_bebida'] }}">
+                {{ b['nome_bebida'] }}
+            </option>
+        {% endfor %}
+    </select>
+    <span>Bebida</span>
+</label>
+
+
 
         <label>
             <input name="valor_entrada" class="inputt" type="number" step="0.01" required>
@@ -46,7 +70,7 @@
         </label>
 
         <label>
-            <input name="qtd_entradas" class="inputt" type="number" required>
+            <input name="qtd_entradas" class="inputt" type="number" min="1" required>
             <span>Quantidade</span>
         </label>
 
@@ -54,5 +78,32 @@
         <a href="{{ url_for('entradas') }}">Cancelar</a>
     </form>
 </div>
+
+<script>
+<script>
+function apareceInsumo() {
+    document.getElementById("insumoLabel").style.display = "block";
+    document.getElementById("bebidaLabel").style.display = "none";
+
+    document.querySelector("select[name='insumo_id']").disabled = false;
+    document.querySelector("select[name='bebida_id']").disabled = true;
+}
+
+function apareceBebida() {
+    document.getElementById("insumoLabel").style.display = "none";
+    document.getElementById("bebidaLabel").style.display = "block";
+
+    document.querySelector("select[name='insumo_id']").disabled = true;
+    document.querySelector("select[name='bebida_id']").disabled = false;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    apareceInsumo(); // estado inicial
+});
+</script>
+
+
+</script>
+
 
 {% endblock %}

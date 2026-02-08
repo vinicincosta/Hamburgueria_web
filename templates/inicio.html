@@ -46,8 +46,7 @@
 
             {% endif %}
             <a href="{{url_for('pedidos')}}">PEDIDOS</a>
-            <a href="{{url_for('lanches')}}">CARDÁPIO</a>
-            <a href="{{url_for('insumos')}}">INSUMOS</a>
+
         </div>
     </div>
 </nav>
@@ -301,10 +300,9 @@
 </header>
 {% block content %}
 {% if request.endpoint == 'index' %}
-<video autoplay muted loop id="bg-video">
-    <source src="../static/a.mp4" type="video/mp4">
-</video>
+<div class="bg-image"></div>
 {% endif %}
+
 <main>
     <!--            <a class="rota_inicial" href="{{ url_for('pessoas') }}">PESSOAS</a>-->
 
@@ -340,7 +338,7 @@
 <script>
     async function carregarDados() {
         try {
-            const resposta = await fetch("http://192.168.1.238:5002/dados_grafico");
+            const resposta = await fetch("http://192.168.0.141:5002/dados_grafico");
             const dados = await resposta.json();
 
             const ctx = document.getElementById("graficoVendas").getContext("2d");

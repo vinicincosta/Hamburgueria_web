@@ -597,45 +597,53 @@ def cadastrar_entradas():
         return redirect(url_for(session.get('funcao_rota_anterior', 'entradas')))
 
     if request.method == 'POST':
+        tipo = request.form.get('tipo')  # 🔥 FUNDAMENTAL
         qtd_entrada = request.form.get('qtd_entradas')
         insumo_id = request.form.get('insumo_id')
         bebida_id = request.form.get('bebida_id')
         valor_entrada = request.form.get('valor_entrada')
         nota_fiscal = request.form.get('nota_fiscal')
-        data_entrada = datetime.datetime.now()
 
-        # validação básica
         if not qtd_entrada or not valor_entrada or not nota_fiscal:
             flash('Preencha todos os campos', 'error')
             return redirect(url_for('cadastrar_entradas'))
 
-        # deve escolher insumo OU bebida
-        if not insumo_id and not bebida_id:
-            flash('Selecione um insumo ou uma bebida', 'error')
-            return redirect(url_for('cadastrar_entradas'))
+        if tipo == 'insumo':
+            bebida_id = None
+            if not insumo_id:
+                flash('Selecione um insumo', 'error')
+                return redirect(url_for('cadastrar_entradas'))
 
-        data_entrada = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-        if insumo_id:
             salvar_entrada = routes_web.post_entradas_insumos(
                 session['token'],
                 insumo_id,
+
                 qtd_entrada,
-                data_entrada,
+                datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 nota_fiscal,
                 valor_entrada
             )
-        else:
+
+        elif tipo == 'bebida':
+            insumo_id = None
+            if not bebida_id:
+                flash('Selecione uma bebida', 'error')
+                return redirect(url_for('cadastrar_entradas'))
+
             salvar_entrada = routes_web.post_entradas_bebidas(
                 session['token'],
                 bebida_id,
                 qtd_entrada,
-                data_entrada,
+                datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 nota_fiscal,
                 valor_entrada
             )
 
-        if 'success' in salvar_entrada:
+        else:
+            flash('Tipo inválido', 'error')
+            return redirect(url_for('cadastrar_entradas'))
+
+        if salvar_entrada and 'success' in salvar_entrada:
             flash('Entrada adicionada com sucesso', 'success')
             return redirect(url_for('entradas'))
 
@@ -656,6 +664,7 @@ def cadastrar_entradas():
 
     flash('Parece que algo ocorreu errado', 'error')
     return redirect(url_for('entradas'))
+
 
 
 @app.route('/categorias/cadastrar', methods=['POST', 'GET'])
@@ -687,44 +696,63 @@ def get_vendas_por_funcionarios():
 @app.route("/formulario_teste")
 def formulario_teste():
     return render_template("formulario_teste.html")
-
 @app.route('/bebidas/cadastrar', methods=['GET', 'POST'])
 def cadastrar_bebidas():
     retorno = verificar_token()
     if retorno:
         return retorno
-    if session['papel'] != "admin":
+
+    if session.get('papel') != "admin":
         flash('Você não tem acesso, entre com uma conta autorizada', 'info')
-        return redirect(url_for(session['funcao_rota_anterior']))
+        return redirect(url_for(session.get('funcao_rota_anterior', 'bebidas')))
+
     if request.method == 'POST':
-        nome_bebida = request.form['nome_bebida']
-        valor = request.form['valor']
-        categoria_id = request.form['categoria_id']
-        descricao = request.form['descricao']
-        if not nome_bebida or not valor or not categoria_id:
-            flash('Preencha todos os campos!', 'error')
+        nome_bebida = request.form.get('nome_bebida')
+        descricao = request.form.get('descricao')
+        valor = request.form.get('valor')
+        id_categoria = request.form.get('categoria')  # vem do <select>
+
+        if not nome_bebida or not valor or not id_categoria:
+            flash('Preencha todos os campos obrigatórios!', 'error')
             return redirect(url_for('cadastrar_bebidas'))
 
-        salvar_bebida = routes_web.post_bebidas(session['token'], nome_bebida, valor, categoria_id, descricao)
-        print('salvou')
-        print(salvar_bebida)
-        if 'success' in salvar_bebida:
+        try:
+            valor = float(valor)
+            id_categoria = int(id_categoria)
+        except ValueError:
+            flash('Valor ou categoria inválidos', 'error')
+            return redirect(url_for('cadastrar_bebidas'))
 
-            print('entrou em sucesso')
+        salvar_bebida = routes_web.post_bebidas(
+            token=session['token'],
+            nome_bebida=nome_bebida,
+            valor=valor,
+            id_categoria=id_categoria,
+            descricao=descricao
+        )
+
+        print('RETORNO API:', salvar_bebida)
+
+        if salvar_bebida and 'success' in salvar_bebida:
             flash('Bebida adicionada com sucesso', 'success')
             return redirect(url_for('bebidas'))
 
         flash('Parece que algo ocorreu errado', 'error')
         return redirect(url_for('cadastrar_bebidas'))
-    else:
-        categorias = routes_web.get_categorias(session['token'])
 
-        if 'categorias' in categorias:
-            # print()
-            session['funcao_rota_anterior'] = 'cadastrar_bebidas'
-            return render_template('cadastrar_bebidas.html', categorias=categorias['categorias'])
-        flash('Parece que algo ocorreu errado :/', 'error')
-        return redirect(url_for('bebidas'))
+    # GET
+    categorias = routes_web.get_categorias(session['token'])
+
+    if categorias and 'categorias' in categorias:
+        session['funcao_rota_anterior'] = 'cadastrar_bebidas'
+        return render_template(
+            'cadastrar_bebidas.html',
+            categorias=categorias['categorias']
+        )
+
+    flash('Não foi possível carregar as categorias', 'error')
+    return redirect(url_for('bebidas'))
+
 #
 @app.route("/faturamento")
 def faturamento():

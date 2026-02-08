@@ -2,7 +2,7 @@ from logging import exception
 
 import requests
 
-url = "http://192.168.0.123:5002"
+url = "http://192.168.0.141:5002"
 
 
 def get_bebidas(token_):
@@ -172,23 +172,38 @@ def get_id_pessoa_by_token(token_):
 
 # POST
 
-def post_bebidas(token_, nome_bebida, valor, categoria_id, descricao):
+def post_bebidas(token, nome_bebida, valor, id_categoria, descricao=None):
+    payload = {
+        "nome_bebida": nome_bebida,
+        "valor": valor,
+        "id_categoria": id_categoria,
+        "descricao": descricao
+    }
 
-        response = requests.post(f"{url}/bebidas", json={
-            "nome_bebida":nome_bebida,
-            "valor":valor,
-            "id_categoria":categoria_id,
-            'descricao':descricao
-        }, headers={'Authorization': f'Bearer {token_}'})
-        if response.status_code == 201:
-            print('retornou aqui')
-            return response.json()
+    print("PAYLOAD ENVIADO:", payload)
 
+    response = requests.post(
+        f"{url}/bebidas",
+        json=payload,
+        headers={
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json'
+        }
+    )
 
-        else:
-            print(response.status_code)
-            print(response.json())
-            return {'erro':response.status_code}
+    try:
+        data = response.json()
+    except ValueError:
+        return {"erro": "Resposta inválida da API", "status": response.status_code}
+
+    if response.status_code == 201:
+        return data
+
+    return {
+        "erro": data.get("error", "Erro ao cadastrar bebida"),
+        "status": response.status_code
+    }
+
 
 
 def post_cadastro_pessoas(token_, nome, cpf, email, senha, salario, papel):
