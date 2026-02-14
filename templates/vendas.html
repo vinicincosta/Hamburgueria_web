@@ -17,7 +17,7 @@
                     <p class="titulo_venda">Data venda:</p>
                     <p>{{ vendas['data_venda'] }}</p>
                 </div>
-                <div><p>valor_venda: {{ vendas['valor_venda'] }}</p></div>
+                <div><p>Valor Venda: {{ vendas['valor_venda'] }}</p></div>
             </div>
 
             <div class="flip-card-back">
@@ -26,7 +26,7 @@
                 {% else %}
                 <p style="font-size: 15px" class="titulo_venda">item vendido: {{ vendas['bebida'] }}</p>
                 {% endif %}
-                <p>vendedor: {{ vendas['pessoa'] }}</p>
+                <p>Vendedor: {{ vendas['pessoa'] }}</p>
 
                 {% if vendas['status_venda'] %}
                 <p>Venda finalizada</p>
@@ -37,7 +37,7 @@
                 {% if 'Presencial' in vendas['endereco'] %}
                 <p>venda realizada local</p>
                 {% else %}
-                <p>endereço: {{ vendas['endereco'] }}</p>
+                <p>Endereço: {{ vendas['endereco'] }}</p>
                 {% endif %}
             </div>
         </div>

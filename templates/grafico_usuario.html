@@ -52,7 +52,7 @@ Chart.register(pluginAvatarDia);
 
 async function carregarGraficoDia() {
     const dataEscolhida = document.getElementById("data-dia")?.value;
-    let url = "http://192.168.1.238:5002/vendas_valor_por_funcionario";
+    let url = "http://192.168.0.17:5002/vendas_valor_por_funcionario";
     if (dataEscolhida) url += `?date=${dataEscolhida}`;
 
     const res = await fetch(url);

@@ -94,7 +94,7 @@ Chart.register(pluginAvatar);
 
 async function carregarGraficoMes() {
     const mesSel = document.getElementById("mes").value;
-    let url = "http://10.135.232.24:5002/vendas_valor_por_funcionario_mes";
+    let url = "http://192.168.0.17:5002/vendas_valor_por_funcionario_mes";
     if (mesSel) url += `?month=${mesSel}`;
 
     const res = await fetch(url);

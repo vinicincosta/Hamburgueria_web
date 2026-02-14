@@ -338,7 +338,7 @@
 <script>
     async function carregarDados() {
         try {
-            const resposta = await fetch("http://192.168.0.141:5002/dados_grafico");
+            const resposta = await fetch("http://192.168.0.17:5002/dados_grafico");
             const dados = await resposta.json();
 
             const ctx = document.getElementById("graficoVendas").getContext("2d");

@@ -1,9 +1,24 @@
+
 from logging import exception
 
 import requests
 
-url = "http://192.168.0.141:5002"
+url = "http://192.168.0.17:5002"
 
+
+def atualizar_status_pedido(token, id_pedido, novo_status):
+
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    response = requests.put(
+        f"{url}/pedido/status/{id_pedido}",
+        json={"status": novo_status},
+        headers=headers
+    )
+
+    return response.json()
 
 def get_bebidas(token_):
     base_url = f"{url}/bebidas"
