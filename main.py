@@ -868,15 +868,12 @@ def venda_mes():
     return render_template('grafico_mensal.html')
 
 
-# @app.route('/venda_garcom')
-# def venda():
-#     return render_template('graficoestilizado.html')
-
 
 #
 # original do dener
-# @app.route('/editar_pessoa/<id_pessoa>', methods=['GET', 'POST'])
+# @app.route('/editar_pessoa/<int:id_pessoa>', methods=['GET', 'POST'])
 # def editar_pessoa(id_pessoa):
+#     print("aaaaaaaaaa")
 #     try:
 #         retorno = verificar_token()
 #         if retorno:
@@ -905,7 +902,7 @@ def venda_mes():
 #                 routes_web.put_editar_pessoa(session['token'], id_pessoa, pessoa['nome_pessoa'], pessoa['cpf'], pessoa['salario'], pessoa['papel'], generate_password_hash(senha), email, pessoa['status'])
 #         else:
 #             session['funcao_rota_anterior'] = 'pessoas'
-#             return render_template('editar_pessoa.html', pessoa=pessoa)
+#             return render_template('editar_pessoa_1.html', pessoa=pessoa)
 #
 #     except Exception as erro:
 #         print(f'será que é esse erro?{erro}')
@@ -913,73 +910,116 @@ def venda_mes():
 #         return redirect(url_for(session['funcao_rota_anterior']))
 
 
-@app.route('/mudar_status/<id_pedido>', methods=['GET', 'POST'])
-def mudar_status(id_pedido):
-    a = routes_web.put_editar_status_pedidos(session['token'], id_pedido)
-    flash(f'pedido#{id_pedido} editado com sucesso', 'success')
-    return redirect(url_for('pedidos'))
 
-
-@app.route('/editar_pessoa/<int:id_pessoa>', methods=['GET', 'POST'])
+@app.route('/editar_pessoa/<id_pessoa>', methods=['GET', 'POST'])
 def editar_pessoa(id_pessoa):
     try:
-        # Verifica token
+        # Garante que id_pessoa é int para comparações
+        try:
+            id_pessoa_int = int(id_pessoa)
+        except ValueError:
+            flash("ID de pessoa inválido", "error")
+            return redirect(url_for(session.get('funcao_rota_anterior', 'index')))
+
         retorno = verificar_token()
         if retorno:
             return retorno
 
-        # Permissão: admin ou editando própria conta
+        # Protege comparação de tipos
         session_user_id = session.get('user_id')
-        if session.get('papel') != 'admin' and session_user_id != id_pessoa:
-            flash('Você não tem acesso', 'info')
+        try:
+            session_user_id_int = int(session_user_id) if session_user_id is not None else None
+        except ValueError:
+            session_user_id_int = None
+
+        if session.get('papel') != "admin" and session_user_id_int != id_pessoa_int:
+            flash('Você não tem acesso, entre com uma conta autorizada', 'info')
             return redirect(url_for(session.get('funcao_rota_anterior', 'index')))
 
-        # Busca pessoa pelo id correto da URL
-        resposta = routes_web.get_pessoa_by_id(session['token'], id_pessoa)
+        # Busca pessoa (verifica retorno)
+        print("a: ",id_pessoa_int)
+        resposta = routes_web.get_pessoa_by_id(session['token'], id_pessoa_int)
         if not resposta or 'pessoa' not in resposta:
             flash('Não foi possível obter dados da pessoa', 'error')
             return redirect(url_for(session.get('funcao_rota_anterior', 'index')))
         pessoa = resposta['pessoa']
+        print(pessoa)
 
         if request.method == 'POST':
-            # Pega dados do formulário
+            # Nome do campo no HTML é "cargo" — primeiro tenta esse, depois 'papel' (compatibilidade)
             papel = request.form.get('cargo') or request.form.get('papel') or pessoa.get('papel')
-            salario = int(request.form.get('salario') or pessoa.get('salario', 0))
-            senha = request.form.get('senha')
-            email = request.form.get('email') or pessoa.get('email')
-            status = request.form.get('status') or pessoa.get('status') or pessoa.get('status_pessoa')
+            # Salário: tenta converter, se falhar usa o existente
+            salario_raw = request.form.get('salario')
+            try:
+                salario = int(salario_raw) if salario_raw not in (None, '') else int(pessoa.get('salario', 0))
+            except Exception:
+                flash('Salário inválido', 'error')
+                return redirect(url_for('editar_pessoa', id_pessoa=id_pessoa_int))
 
-            # Se senha não foi preenchida, mantém a existente
-            senha_hash = generate_password_hash(senha) if senha else pessoa.get('senha_hash') or pessoa.get('senha') or ''
+            # Pega a senha atual armazenada (pode ser 'senha_hash' ou 'senha' dependendo do que a API retorna)
+            senha_existente = pessoa.get('senha_hash') or pessoa.get('senha') or ''
 
-            # Atualiza pessoa
+            # Branch admin
+            if session.get('papel') == "admin":
+                # Se admin editando a própria conta -> permite trocar email/senha também
+                if session_user_id_int == id_pessoa_int:
+                    senha_form = request.form.get('senha')
+                    email_form = request.form.get('email') or pessoa.get('email')
+                    if senha_form:
+                        senha_hash = generate_password_hash(senha_form)
+                    else:
+                        senha_hash = senha_existente
+                    email = email_form
+                    status_final = pessoa.get('status_pessoa') or pessoa.get('status')
+                else:
+                    # admin editando outro usuário
+                    status_final = request.form.get('status') or pessoa.get('status_pessoa') or pessoa.get('status')
+                    # Mantém senha/email existentes quando admin edita outro sem alterar senha
+                    senha_hash = senha_existente
+                    email = pessoa.get('email')
+            else:
+                # usuário comum editando a própria conta
+                senha_form = request.form.get('senha')
+                email = request.form.get('email') or pessoa.get('email')
+                if senha_form:
+                    senha_hash = generate_password_hash(senha_form)
+                else:
+                    senha_hash = senha_existente
+                status_final = pessoa.get('status_pessoa') or pessoa.get('status')
+
+            # Chama a função de PUT já instrumentada
             resultado = routes_web.put_editar_pessoa(
                 session['token'],
-                id_pessoa,
-                pessoa.get('nome_pessoa'),
+                id_pessoa_int,
+                pessoa.get('nome_pessoa'),   # você não altera nome no form, mantém
                 pessoa.get('cpf'),
                 salario,
                 papel,
                 senha_hash,
                 email,
-                status
+                status_final
             )
 
-            if resultado.get('erro'):
+            print("Resultado do put_editar_pessoa:", resultado)
+
+            # Verifica se houve erro
+            if isinstance(resultado, dict) and resultado.get('erro'):
                 flash(f"Erro ao editar pessoa: {resultado}", "error")
-                return redirect(url_for('editar_pessoa', id_pessoa=id_pessoa))
+                return redirect(url_for('editar_pessoa', id_pessoa=id_pessoa_int))
 
             flash("Pessoa editada com sucesso!", "success")
             return redirect(url_for(session.get('funcao_rota_anterior', 'pessoas')))
 
-        # GET: renderiza form
-        session['funcao_rota_anterior'] = 'pessoas'
-        return render_template('editar_pessoa_1.html', pessoa=pessoa)
+        else:
+            session['funcao_rota_anterior'] = 'pessoas'
+            return render_template('editar_pessoa.html', pessoa=pessoa)
 
-    except Exception as e:
-        print(f'Erro editar_pessoa: {e}')
-        flash('Algo deu errado', 'error')
+    except Exception as erro:
+        print(f'será que é esse erro? {erro}')
+        flash('Parece que algo deu errado', 'error')
         return redirect(url_for(session.get('funcao_rota_anterior', 'pessoas')))
+
+
 
 
 
