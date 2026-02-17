@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vendas por Funcionário</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+<h2>📊 Vendas por Funcionário</h2>
+
+<div class="cards">
+    {% for p in pessoas %}
+        {% if p['papel'] == 'garcom' %}
+            <div class="card-garcom" data-id="{{ p['id_pessoa'] }}">
+                <div class="nome">{{ p['nome_pessoa'] }}</div>
+
+                <div class="chart-container">
+                    <canvas id="chart-{{ p['id_pessoa'] }}"></canvas>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<div class="card-grafico">
+        <h2>Desempenho dos Garçons</h2>
+        <canvas id="graficoFuncionarios"></canvas>
+    </div>
+
+<script>
+    async function carregarGraficoFuncionarios() {
+        try {
+            const resposta = await fetch("/dados_grafico_funcionarios");
+            const dados = await resposta.json();
+
+            console.log("Dados recebidos:", dados); // 🔥 debug
+
+            const ctx = document.getElementById("graficoFuncionarios").getContext("2d");
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: dados.labels,   // CORRIGIDO: labels em vez de nomes
+                    datasets: [{
+                        label: "Vendas Hoje (R$)",
+                        data: dados.totals,
+                        backgroundColor: "rgba(218,165,32,0.7)",
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: "#fff"
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: "#ccc" }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: "#ccc" }
+                        }
+                    }
+                }
+            });
+
+        } catch (err) {
+            console.error("Erro no gráfico funcionários:", err);
+        }
+    }
+
+    carregarGraficoFuncionarios();
+</script>
+
+
+
+</body>
+</html>

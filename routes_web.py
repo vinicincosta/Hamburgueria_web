@@ -40,6 +40,32 @@ def get_lanches(token_): # Feito
         print(response.json())
         return {'erro':response.status_code}
 
+
+def get_vendas_hoje_por_funcionario(token):
+    base_url = f"{url}/vendas_hoje_por_funcionario"
+
+    response = requests.get(
+        base_url,
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    print("Status code:", response.status_code)
+    print("Response text:", response.text)
+
+    if response.status_code == 200:
+        try:
+            return response.json()
+        except Exception:
+            return {"erro": "Resposta inválida da API"}
+    else:
+        return {
+            "erro": response.status_code,
+            "mensagem": response.text
+        }
+
+
+
+    return response.json()
 def get_insumos(token_): # Feito
     base_url = f"{url}/insumos"
     response = requests.get(base_url, headers={'Authorization': f'Bearer {token_}'})
@@ -313,20 +339,6 @@ def post_lanche_insumos(token_, lanche_id, insumo_id, qtd_insumo):
         return {"error": f"Erro inesperado ({response.status_code})"}
 
 
-# def post_vendas(token_, data_venda, lanche_id, pessoa_id, qtd_lanche, detalhamento):
-#     response = requests.post(f"{url}/vendas", json={
-#         "data_venda":data_venda,
-#         "lanche_id":lanche_id,
-#         "pessoa_id":pessoa_id,
-#         "qtd_lanche":qtd_lanche,
-#         "detalhamento":detalhamento
-#     }, headers={'Authorization': f'Bearer {token_}'})
-#     if response.status_code == 201:
-#         return response.json()
-#     else:
-#         print(response.status_code)
-#         print(response.json())
-#         return {'erro':response.status_code}
 
 def post_categorias(token_, nome_categoria):
     response = requests.post(f"{url}/categorias", json={"nome_categoria":nome_categoria}, headers={'Authorization': f'Bearer {token_}'})
@@ -466,11 +478,3 @@ def delete_lanche_insumo(token_, lanche_id, insumo_id):
         return {"error": f"Erro inesperado ({response.status_code})"}
 
 
-
-
-# def post_cadastrar_pedido(token_, nome_pedido, categoria_id):
-#     response = requests.post(f"{url}/pedidos", json={})
-
-# print(get_insumos(post_login('vini@', '123')))
-
-# print(get_categorias(post_login("d@", "123")['access_token']))

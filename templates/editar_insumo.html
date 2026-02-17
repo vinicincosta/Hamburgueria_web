@@ -1,12 +1,13 @@
 {% extends 'inicio.html' %}
 {% block content %}
 
-<main class="form-container">
-    <form class="form-card"
+<div class="div_pai_cadastrar_pessoa">
+    <form class="form"
           method="post"
           action="{{ url_for('editar_insumo', id_insumo=insumo['id_insumo']) }}">
 
-        <h2>Editar Insumo</h2>
+       <p class="title">Editar</p>
+        <p class="message">Editar Insumo</p>
 
         <label>
             <span>Nome do Insumo</span>
@@ -27,12 +28,10 @@
             </select>
         </label>
 
-        <div class="form-actions">
-            <button type="submit" class="btn-salvar">Salvar</button>
-            <a href="{{ url_for('insumos') }}" class="btn-cancelar">Cancelar</a>
-        </div>
+        <button class="submit">Salvar</button>
+        <a href="{{ url_for('insumos') }}">Cancelar</a>
 
     </form>
-</main>
+</div>
 
 {% endblock %}

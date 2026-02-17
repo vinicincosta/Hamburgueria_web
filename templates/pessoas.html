@@ -1,131 +1,77 @@
 {% extends 'inicio.html' %}
 
 {% block content %}
-<main>
-  <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
-    <h2 style="color:white;margin:0">Funcionários</h2>
-  </div>
+<main class="">
 
-  <div id="cards-container" style="display:flex;flex-wrap:wrap;gap:16px;">
-    {% for p in pessoas %}
-      {% if p['papel'] == 'garcom' %}
+    <!-- ================= BARRA DE AÇÕES ================= -->
+    <div style="display:flex;flex-wrap:wrap;gap:15px;margin-bottom:30px;">
+        <a href="{{ url_for('cadastrar_pessoas') }}"
+           class="btn-cadastrar">➕ Cadastrar Funcionário</a>
 
-      <div class="func-card" data-id="{{ p['id_pessoa'] }}" style="background:#1f1f1f;padding:12px;border-radius:8px;width:220px;box-shadow:0 6px 14px rgba(0,0,0,0.5);">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:46px;height:46px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#fff;">
-            {{ p['nome_pessoa'][:1] }}
-          </div>
-          <div style="flex:1">
-            <div style="font-size:14px;color:#ddd;font-weight:600;">{{ p['nome_pessoa'] }}</div>
-            <div style="font-size:12px;color:#aaa;">{{ p['papel'] }}</div>
-          </div>
+
+        <a href="{{ url_for('vendas_hoje_por_funcionario') }}"
+           class="btn-cadastrar">📊 Vendas de Hoje</a>
+    </div>
+
+    <!-- ================= GARÇONS ================= -->
+    <section style="width:100%;">
+        <h2 style="color:white;margin-bottom:20px;">🍽 Garçons</h2>
+
+        <div style="display:flex;flex-wrap:wrap;gap:20px;">
+            {% for p in pessoas %}
+            {% if p['papel'] == 'garcom' %}
+            <div class="card-garcom" data-id_pessoa="{{ p['id_pessoa'] }}">
+
+
+
+                <div class="card-header">
+                    <div class="avatar">{{ p['nome_pessoa'][:1] }}</div>
+                    <div class="info">
+                        <div class="nome">{{ p['nome_pessoa'] }}</div>
+                        <div class="cargo">Garçom</div>
+                    </div>
+                </div>
+                <a href="{{ url_for('editar_pessoa', id_pessoa=p['id_pessoa']) }}" class="btn-editar">Editar</a>
+
+
+
+
+
+
+            </div>
+            {% endif %}
+            {% endfor %}
         </div>
+    </section>
 
-        <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;">
-          <div>
-            <div style="font-size:12px;color:#bbb;">Vendas hoje</div>
-            <div id="count-{{ p['id_pessoa'] }}" class="vendas-count" style="font-size:20px;font-weight:700;color:#ffd700;">0</div>
-          </div>
-          <div style="width:50vw;height:50vh;">
-            <canvas id="chart-{{ p['id_pessoa'] }}" width="96" height="48" style="display:block;"></canvas>
-          </div>
-        </div>
+    <!-- ================= COZINHA ================= -->
+    <section style="width:100%;margin-top:40px;">
+        <h2 style="color:white;margin-bottom:20px;">👨‍🍳 Cozinha</h2>
 
-        <div style="margin-top:8px;font-size:11px;color:#999;">
-          Valor total hoje: <span id="total-{{ p['id_pessoa'] }}">R$ 0.00</span>
+        <div style="display:flex;flex-wrap:wrap;gap:20px;">
+            {% for p in pessoas %}
+            {% if p['papel'] == 'cozinha' %}
+            <div class="card-cozinha">
+                <div class="card-header">
+                    <div class="avatar cozinha-avatar">{{ p['nome_pessoa'][:1] }}</div>
+                    <div class="info">
+                        <div class="nome">{{ p['nome_pessoa'] }}</div>
+                        <div class="cargo">Cozinha</div>
+
+                    </div>
+                     <a href="{{ url_for('editar_pessoa', id_pessoa=p['id_pessoa']) }}" class="btn-editar">Editar</a>
+
+
+
+                </div>
+            </div>
+
+            {% endif %}
+
+            {% endfor %}
         </div>
-      </div>
-       {% endif %}
-    {% endfor %}
-  </div>
+    </section>
+
 </main>
-
-<!-- garante que Chart.js já está carregado (inicio.html já inclui). -->
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-  // tenta usar o host atual com porta 5002 (mesma configuração que você já usou em inicio.html)
-  const API_BASE = `http://${window.location.hostname}:5002`;
-  const today = new Date().toISOString().slice(0,10);
-
-  // 1) Busca, em uma chamada, as vendas (counts) do dia por funcionário
-  let mapById = {};
-  try {
-    const resp = await fetch(`${API_BASE}/vendas_valor_por_funcionario?date=${today}`);
-    if (resp.ok) {
-      const data = await resp.json();
-      // data: { labels, totals, counts, ids }
-      if (data.ids && Array.isArray(data.ids)) {
-        data.ids.forEach((id, i) => {
-          mapById[id] = {
-            count: (data.counts && data.counts[i]) ? data.counts[i] : 0,
-            total: (data.totals && data.totals[i]) ? data.totals[i] : 0,
-            label: (data.labels && data.labels[i]) ? data.labels[i] : ''
-          };
-        });
-      }
-    } else {
-      console.warn('Falha ao buscar vendas por funcionário:', resp.status);
-    }
-  } catch (err) {
-    console.error('Erro ao buscar vendas por funcionário:', err);
-  }
-
-  // 2) Para cada card: atualiza número e total, e busca os últimos 7 dias para sparkline
-  const cards = document.querySelectorAll('.func-card');
-  for (const card of cards) {
-    const id = card.dataset.id;
-    const countEl = document.getElementById(`count-${id}`);
-    const totalEl = document.getElementById(`total-${id}`);
-    const chartEl = document.getElementById(`chart-${id}`);
-    const info = mapById[id] || { count: 0, total: 0 };
-
-    // mostra contagem + total (formatado)
-    countEl.textContent = info.count;
-    totalEl.textContent = `R$ ${Number(info.total || 0).toFixed(2)}`;
-
-    // buscar últimos 7 dias (sparkline). Se falhar, desenha uma linha vazia.
-    try {
-      const r = await fetch(`${API_BASE}/vendas_ultimos7?id=${id}`);
-      if (r.ok) {
-        const s = await r.json();
-        const labels = s.dias || [];
-        const dataPoints = s.totais || [];
-        // cria chart pequeno (sem eixos, sem legenda)
-        const ctx = chartEl.getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [{
-              data: dataPoints,
-              borderWidth: 2,
-              tension: 0.3,
-              fill: false,
-              pointRadius: 0
-            }]
-          },
-          options: {
-            plugins: { legend: { display: false } },
-            elements: { point: { radius: 0 } },
-            scales: {
-              x: { display: false },
-              y: { display: false }
-            },
-            maintainAspectRatio: false,
-            responsive: true,
-            layout: { padding: 0 }
-          }
-        });
-      } else {
-        // desenha vazio
-        const ctx = chartEl.getContext('2d');
-        new Chart(ctx, { type:'line', data:{labels:[],datasets:[{data:[]}]}, options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}},maintainAspectRatio:false}});
-      }
-    } catch (err) {
-      console.error(`Erro vendas_ultimos7 para id=${id}:`, err);
-    }
-  }
-});
-</script>
 
 {% endblock %}

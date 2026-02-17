@@ -1,0 +1,65 @@
+{% extends 'inicio.html' %}
+{% block content %}
+
+
+<div class="div_pai_cadastrar_pessoa">
+    <form class="form"
+          method="post"
+          action="{{ url_for('editar_pessoa', id_pessoa=pessoa['id_pessoa']) }}">
+
+        <p class="title">Editar</p>
+        <p class="message">Editar Pessoa</p>
+
+        <label>
+            <input
+                    name="nome_pessoa"
+                    value="{{ pessoa['nome_pessoa'] }}"
+                    class="inputt"
+                    type="text"
+                    required
+            >
+            <span>Nome</span>
+        </label>
+
+        <label>
+            <input
+                    name="nome_pessoa"
+                    value="{{ pessoa['nome_pessoa'] }}"
+                    class="inputt"
+                    type="text"
+                    required
+            >
+            <span>Nome</span>
+        </label>
+        <label>
+            <span>Status</span> <br>
+            <label for="inativo">Inativo</label>
+            <input id="inativo" type="radio" name="status" value="Inativo">
+            <label for="ativo">ativo</label>
+            <input id="ativo" type="radio" name="status" value="Ativo">
+        </label>
+        <label>
+            <input name="salario" class="inputt" type="number" placeholder="" required="">
+            <span>Salário</span>
+        </label>
+        <label>
+            <input name="email" class="inputt" value="{{pessoa['email']}}" type="email" placeholder="" required>
+            <span>Email</span>
+        </label>
+
+        <label for="cargo">Cargo:</label>
+        <select id="cargo" name="cargo">
+            <option value="garcom">Garçom</option>
+            <option value="cozinha">Cozinha</option>
+            <option value="admin" selected>Admnistrador</option>
+        </select>
+        <label>
+
+            <button class="submit">Salvar</button>
+            <a href="{{ url_for('pessoas') }}">Cancelar</a>
+        </label>
+    </form>
+
+</div>
+
+{% endblock %}
