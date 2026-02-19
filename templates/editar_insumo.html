@@ -10,9 +10,14 @@
         <p class="message">Editar Insumo</p>
 
         <label>
-            <span>Nome do Insumo</span>
-            <input type="text" name="nome_insumo"
-                   value="{{ insumo['nome_insumo'] }}" required>
+            <input
+                name="nome_insumo"
+                value="{{ insumo['nome_insumo'] }}"
+                class="inputt"
+                type="text"
+                required
+            >
+            <span>Nome</span>
         </label>
 
         <label>

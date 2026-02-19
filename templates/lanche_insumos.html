@@ -160,6 +160,11 @@
 
 <main>
     <div class="filtros-container">
+
+    <div>
+        <a href="{{ url_for('cadastrar_lanche_insumos') }}"
+           class="btn-cadastrar">➕ Cadastrar Receita</a>
+    </div>
         <div class="filtro-item">
             <form method="get" action="{{ url_for('lanche_insumos') }}">
                 <input type="hidden" name="exibir_tabela" value="{{ exibir_tabela }}">
@@ -174,44 +179,44 @@
 
     {% if exibir_tabela in ['False', False] %}
 
-        {% for i in lanche_insumos %}
-        <div class="card">
-            <h1>{{ i['insumo_nome'] }} - {{ i['lanche_nome'] }}</h1>
-            <p>{{ i['qtd_insumo'] }}g</p>
-            <form method="POST"
-                action="{{ url_for('deletar_lanche_insumo', lanche_id=i['lanche_id'], insumo_id=i['insumo_id']) }}">
-                <button type="submit" class="btn-delete">🗑️</button>
-            </form>
-        </div>
-        {% endfor %}
+    {% for i in lanche_insumos %}
+    <div class="card">
+        <h1>{{ i['insumo_nome'] }} - {{ i['lanche_nome'] }}</h1>
+        <p>{{ i['qtd_insumo'] }}g</p>
+        <form method="POST"
+              action="{{ url_for('deletar_lanche_insumo', lanche_id=i['lanche_id'], insumo_id=i['insumo_id']) }}">
+            <button type="submit" class="btn-delete">🗑️</button>
+        </form>
+    </div>
+    {% endfor %}
 
     {% else %}
 
     <table>
         <thead>
-            <tr>
-                <th>ID</th>
-                <th>INSUMO</th>
-                <th>LANCHE</th>
-                <th>QTD</th>
-                <th>AÇÕES</th>
-            </tr>
+        <tr>
+            <th>ID</th>
+            <th>INSUMO</th>
+            <th>LANCHE</th>
+            <th>QTD</th>
+            <th>AÇÕES</th>
+        </tr>
         </thead>
         <tbody>
-            {% for i in lanche_insumos %}
-            <tr>
-                <td>{{ i['id_lanche_insumo'] }}</td>
-                <td>{{ i['insumo_nome'] }}</td>
-                <td>{{ i['lanche_nome'] }}</td>
-                <td>{{ i['qtd_insumo'] }}</td>
-                <td>
-                    <form method="POST"
-                        action="{{ url_for('deletar_lanche_insumo', lanche_id=i['lanche_id'], insumo_id=i['insumo_id']) }}">
-                        <button type="submit" class="btn-delete">🗑️</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
+        {% for i in lanche_insumos %}
+        <tr>
+            <td>{{ i['id_lanche_insumo'] }}</td>
+            <td>{{ i['insumo_nome'] }}</td>
+            <td>{{ i['lanche_nome'] }}</td>
+            <td>{{ i['qtd_insumo'] }}</td>
+            <td>
+                <form method="POST"
+                      action="{{ url_for('deletar_lanche_insumo', lanche_id=i['lanche_id'], insumo_id=i['insumo_id']) }}">
+                    <button type="submit" class="btn-delete">🗑️</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
         </tbody>
     </table>
 
@@ -225,7 +230,7 @@
 
         {% for p in range(1, total_pages+1) %}
         <a href="{{ url_for('lanche_insumos', page=p, exibir_tabela=exibir_tabela) }}"
-           {% if p == page %}class="active"{% endif %}>{{ p }}</a>
+           {% if p== page %}class="active" {% endif %}>{{ p }}</a>
         {% endfor %}
 
         {% if page < total_pages %}

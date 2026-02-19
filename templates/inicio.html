@@ -36,11 +36,11 @@
         <div class="content-nav">
             {% if session['papel'] == 'admin' %}
             <a href="{{ url_for('pessoas') }}">FUNCIONÁRIOS</a>
-            <a href="{{ url_for('cadastrar_pessoas') }}">CADASTRAR FUNCIONÁRIOS</a>
+
 
             <a href="{{url_for('vendas')}}">VENDAS</a>
 
-            <a href="{{url_for('cadastrar_lanche_insumos')}}">CADASTRAR RECEITA</a>
+
             <a href="{{url_for('lanche_insumos')}}">RECEITA</a>
 
 
@@ -344,7 +344,7 @@
 <script>
     async function carregarDados() {
         try {
-            const resposta = await fetch("http://192.168.0.17:5002/dados_grafico");
+            const resposta = await fetch("http://192.168.0.11:5002/dados_grafico");
             const dados = await resposta.json();
 
             const ctx = document.getElementById("graficoVendas").getContext("2d");
@@ -408,7 +408,7 @@
             const resposta = await fetch("/dados_grafico_funcionarios");
             const dados = await resposta.json();
 
-            console.log("Dados recebidos:", dados); // 🔥 debug
+<!--            console.log("Dados recebidos:", dados); //  debug-->
 
             const ctx = document.getElementById("graficoFuncionarios").getContext("2d");
             if (!ctx) return;

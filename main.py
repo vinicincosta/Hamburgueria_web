@@ -858,6 +858,8 @@ def dados_grafico_funcionarios():
 
     return jsonify(dados)
 
+
+
 # @app.route('/vendas_por_usuario')
 # def vendas_usuario():
 #     return render_template('grafico_usuario.html')

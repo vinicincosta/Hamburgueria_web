@@ -3,7 +3,7 @@ from logging import exception
 
 import requests
 
-url = "http://192.168.0.17:5002"
+url = "http://192.168.0.11:5002"
 
 
 def atualizar_status_pedido(token, id_pedido, novo_status):
