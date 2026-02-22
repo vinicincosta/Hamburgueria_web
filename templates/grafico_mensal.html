@@ -77,7 +77,7 @@ Chart.register({
 async function carregarGraficoMes() {
     const mesSelecionado = document.getElementById("mes").value;
 
-    let url = "http://192.168.0.17:5002/vendas_valor_por_funcionario_mes";
+    let url = "http://192.168.0.11:5002/vendas_valor_por_funcionario_mes";
     if (mesSelecionado) {
         url += `?month=${mesSelecionado}`;
     }

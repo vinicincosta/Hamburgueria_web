@@ -48,7 +48,7 @@ def login():
 
                 if session['papel'] == 'admin':
                     flash('Bem vindo administrador', 'success')
-                    return redirect(url_for('faturamento'))
+                    return render_template("inicio.html")
                 elif session['papel'] == 'cozinha':
                     flash('Bem vindo cozinheiro', 'success')
                     return redirect(url_for('pedidos'))
@@ -763,9 +763,7 @@ def cadastrar_categorias():
         return render_template('cadastrar_categorias.html')
 
 
-@app.route('/vendas_por_funcionarios')
-def get_vendas_por_funcionarios():
-    return render_template('vendas_funcionarios.html')
+
 
 
 @app.route("/formulario_teste")
@@ -840,14 +838,8 @@ def faturamento():
 
 @app.route("/vendas_hoje_por_funcionario")
 def vendas_hoje_por_funcionario():
-    pessoas = routes_web.get_pessoas(session['token'])
-    vendas = routes_web.get_vendas_hoje_por_funcionario(session['token'])
-    print("VENDAS NO FLASK:", vendas)  # 🔥 debug aqui também
-    return render_template(
-        "vendas_hoje_por_funcionario.html",
-        pessoas=pessoas,
-        vendas=vendas
-    )
+    return render_template("vendas_hoje_por_funcionario.html")
+
 
 @app.route("/dados_grafico_funcionarios")
 def dados_grafico_funcionarios():
@@ -859,6 +851,15 @@ def dados_grafico_funcionarios():
     return jsonify(dados)
 
 
+
+@app.route("/dados_grafico_funcionarios_mes")
+def dados_grafico_funcionarios_mes():
+    if 'token' not in session:
+        return jsonify({"erro": "Sem login"}), 401
+
+    dados = routes_web.get_vendas_mes_por_funcionario(session['token'])
+    print(dados)
+    return jsonify(dados)
 
 # @app.route('/vendas_por_usuario')
 # def vendas_usuario():

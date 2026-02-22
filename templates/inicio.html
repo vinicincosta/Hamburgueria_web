@@ -58,10 +58,10 @@
             <img id="logo" src="{{ url_for('static', filename='imgdois.png') }}" alt="Royal Burger">
         </a>
 
-        <!-- 🔥 ÍCONES CENTRALIZADOS -->
+        <!--  ÍCONES CENTRALIZADOS -->
         <div class="header-center">
             <a href="{{ url_for('categorias') }}" class="header-item">
-                <img src="{{ url_for('static', filename='categorias_hamburguer.png') }}">
+                <img src="{{ url_for('static', filename='categoria_hamburguer.png') }}">
                 <span>Categorias</span>
             </a>
 
@@ -76,7 +76,7 @@
             </a>
 
             <a href="{{ url_for('lanches') }}" class="header-item">
-                <img src="{{ url_for('static', filename='cardapio_hamburguer.png') }}">
+                <img src="{{ url_for('static', filename='cardapio_hamburgueria.png') }}">
                 <span>Cardápio</span>
             </a>
 
@@ -326,9 +326,11 @@
     </div>
 
     <!-- Gráfico de Funcionários -->
+
+
     <div class="card-grafico">
-        <h2>Desempenho dos Garçons</h2>
-        <canvas id="graficoFuncionarios"></canvas>
+        <h2>Desempenho dos Garçons por mes</h2>
+        <canvas id="graficoFuncionariosmes"></canvas>
     </div>
 
 </main>
@@ -344,7 +346,7 @@
 <script>
     async function carregarDados() {
         try {
-            const resposta = await fetch("http://192.168.0.11:5002/dados_grafico");
+            const resposta = await fetch("http://192.168.0.14:5002/dados_grafico");
             const dados = await resposta.json();
 
             const ctx = document.getElementById("graficoVendas").getContext("2d");
@@ -402,56 +404,65 @@
 
 
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    async function carregarGraficoFuncionarios() {
-        try {
-            const resposta = await fetch("/dados_grafico_funcionarios");
-            const dados = await resposta.json();
+async function carregargraficoFuncionariosmes() {
+    try {
+        const resposta = await fetch("/dados_grafico_funcionarios_mes");
+        const dados = await resposta.json();
 
-<!--            console.log("Dados recebidos:", dados); //  debug-->
+        if (dados.erro) {
+            console.error("Erro:", dados);
+            return;
+        }
 
-            const ctx = document.getElementById("graficoFuncionarios").getContext("2d");
-            if (!ctx) return;
+        const canvas = document.getElementById("graficoFuncionariosmes");
+        if (!canvas) return;
 
-            new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: dados.labels,   // CORRIGIDO: labels em vez de nomes
-                    datasets: [{
-                        label: "Vendas Hoje (R$)",
-                        data: dados.totals,
-                        backgroundColor: "rgba(218,165,32,0.7)",
-                        borderRadius: 8
-                    }]
+        const ctx = canvas.getContext("2d");
+
+        new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: dados.labels,
+                datasets: [{
+                    label: "Total vendido no mês (R$)",
+                    data: dados.totals,
+                    backgroundColor: "rgba(218,165,32,0.7)",
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: { color: "#fff" }
+                    }
                 },
-                options: {
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: "#fff"
-                            }
-                        }
+                scales: {
+                    x: {
+                        ticks: { color: "#ccc" }
                     },
-                    scales: {
-                        x: {
-                            ticks: { color: "#ccc" }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: "#ccc" }
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: "#ccc",
+                            callback: function(value) {
+                                return "R$ " + value;
+                            }
                         }
                     }
                 }
-            });
+            }
+        });
 
-        } catch (err) {
-            console.error("Erro no gráfico funcionários:", err);
-        }
+    } catch (erro) {
+        console.error("Erro ao carregar gráfico:", erro);
     }
+}
 
-    carregarGraficoFuncionarios();
+document.addEventListener("DOMContentLoaded", carregargraficoFuncionariosmes);
 </script>
-
-
 </body>
 </html>
