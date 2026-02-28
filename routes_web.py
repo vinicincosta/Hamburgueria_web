@@ -3,7 +3,7 @@ from logging import exception
 
 import requests
 
-url = "http://192.168.0.14:5002"
+url = "http://192.168.0.34:5002"
 
 
 def atualizar_status_pedido(token, id_pedido, novo_status):
@@ -84,6 +84,28 @@ def get_vendas_mes_por_funcionario(token):
             "erro": response.status_code,
             "mensagem": response.text
         }
+def get_graficos_vendas(token):
+    base_url = f"{url}/dados_grafico"
+
+    response = requests.get(
+        base_url,
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    print("Status code:", response.status_code)
+    print("Response text:", response.text)
+
+    if response.status_code == 200:
+        try:
+            return response.json()
+        except Exception:
+            return {"erro": "Resposta inválida da API"}
+    else:
+        return {
+            "erro": response.status_code,
+            "mensagem": response.text
+        }
+
 
 def get_insumos(token_): # Feito
     base_url = f"{url}/insumos"

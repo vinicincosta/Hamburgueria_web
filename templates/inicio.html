@@ -299,7 +299,10 @@
 </header>
 {% block content %}
 {% if request.endpoint == 'index' %}
-<div class="bg-image"></div>
+<div class="bg-image">
+     <img id="bg-video" src="{{ url_for('static', filename='hamburguer.jpg') }}" alt="Background">
+
+</div>
 {% endif %}
 
 
@@ -346,8 +349,8 @@
 <script>
     async function carregarDados() {
         try {
-            const resposta = await fetch("http://192.168.0.14:5002/dados_grafico");
-            const dados = await resposta.json();
+             const resposta = await fetch("/dados_grafico_vendas");
+             const dados = await resposta.json();
 
             const ctx = document.getElementById("graficoVendas").getContext("2d");
             if (!ctx) return;

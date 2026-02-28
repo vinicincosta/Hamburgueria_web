@@ -132,8 +132,13 @@ main {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: -1; /* fica atrás do conteúdo */
+    z-index: -1;
+
+    /* Deixa a img mais transparente de forma profissional, mas sem afetar a resolução*/
+    filter: brightness(40%);
 }
+
+
 
 /* Conteúdo por cima do vídeo */
 

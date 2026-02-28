@@ -516,6 +516,7 @@ def lanche_insumos():
 
 @app.route('/deletar_lanche_insumo/<int:lanche_id>/<int:insumo_id>', methods=['POST'])
 def deletar_lanche_insumo(lanche_id, insumo_id):
+    print("aaaaaaaaaaa")
     retorno = verificar_token()
     if retorno:
         return retorno
@@ -840,6 +841,16 @@ def faturamento():
 def vendas_hoje_por_funcionario():
     return render_template("vendas_hoje_por_funcionario.html")
 
+
+
+@app.route("/dados_grafico_vendas")
+def dados_grafico_vendas():
+    if 'token' not in session:
+        return jsonify({"erro": "Sem login"}), 401
+
+    dados = routes_web.get_graficos_vendas(session['token'])
+
+    return jsonify(dados)
 
 @app.route("/dados_grafico_funcionarios")
 def dados_grafico_funcionarios():
