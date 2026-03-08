@@ -1236,7 +1236,7 @@ main {
 /* GRID DE CARDS */
 .insumos-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
     gap: 20px;
     width: 100%;
 }
@@ -1590,20 +1590,28 @@ main {
 /* ================= CARDS PESSOAS ================= */
 /* Card genérico para Garçom e Cozinha */
 .card-garcom, .card-cozinha {
-    background: #1f2a33;                  /* fundo escuro elegante */
-    border-radius: 18px;                   /* cantos arredondados */
-    box-shadow: 0 4px 20px rgba(218,165,32,0.3); /* sombra dourada suave */
+    background: #1f2a33;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(218,165,32,0.3);
     padding: 20px;
     width: 220px;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* Hover do card */
-.card-garcom:hover, .card-cozinha:hover {
+/* INATIVO */
+.card-garcom.inativo,
+.card-cozinha.inativo {
+    background: #0b1116;
+    box-shadow: none;
+    opacity: 0.5;
+}
+
+/* Hover somente para ativos */
+.card-garcom:not(.inativo):hover,
+.card-cozinha:not(.inativo):hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 30px rgba(218,165,32,0.5);
 }
-
 /* Header do card */
 .card-header {
     display: flex;

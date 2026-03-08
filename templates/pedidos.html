@@ -17,12 +17,12 @@
     }
 
     body {
-      background: linear-gradient(180deg, #070708 0%, #0b0c0f 100%);
+
       color: white;
       font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-      padding: 24px;
+      padding: 10px;
     }
 
     .container-controls {
@@ -85,8 +85,9 @@
     /* Grid for cards */
     .cards {
       display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap:18px;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap:24px;
+      max-width: 1400px;
     }
 
     /* Card style */
@@ -101,7 +102,8 @@
       gap:20px;
       transition: transform .18s ease, box-shadow .18s ease;
       overflow:hidden;
-        width: 18vw;
+      padding:22px;
+      gap:24px;
     }
     .card:hover{
       transform: translateY(-6px) scale(1.01);
@@ -120,11 +122,14 @@
       letter-spacing:0.6px;
       font-size:16px;
       color:var(--accent-2);
+      font-size:20px;
     }
     .card .time {
-      font-size:13px;
       color:var(--muted);
+      font-size:16px;
     }
+
+
 
     /* Items list */
     .card .items {
@@ -163,36 +168,7 @@
     .status.cooking { background: #ffb86b; }
     .status.done { background: var(--success); color:#072007; }
 
-    /* Admin table */
-    .table-wrapper{
-      margin-top:12px;
-      overflow:auto;
-      border-radius:12px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .table{
-      width:100%;
-      border-collapse:collapse;
-      min-width:700px;
-    }
-    .table th, .table td{
-      padding:12px 14px;
-      text-align:left;
-      font-size:14px;
-      color:var(--muted);
-      border-bottom:1px solid rgba(255,255,255,0.02);
-    }
-    .table th{
-      color:#fff;
-      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      position:sticky;
-      top:0;
-      z-index:2;
-    }
-    .table tr:hover td{
-      background: rgba(255,255,255,0.01);
-      color:#fff;
-    }
+
 
     /* Responsive */
     @media (max-width:640px){
@@ -207,6 +183,7 @@
 <div class="contanier-geral">
 
     <h2>Pedidos</h2>
+    <img id="bg-video" src="{{ url_for('static', filename='hamburguer_grelhado.jpg') }}" alt="Background">
 
     {% if session['papel'] == 'admin' and exibir_tabela %}
     <!-- ============================= -->
@@ -280,17 +257,24 @@
 
                 <div style="margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.05);">
 
-                    <div style="font-weight:600; color:#fff;">
+                    <div style="font-weight:600; color:#fff; font-size:14px;">
                         Pedido #{{ p['id_pedido'] }}
                     </div>
 
-                    <div style="margin-top:4px;">
+                    <div style="margin-top:4px; font-size:14px;">
                         {{ p['detalhamento'] }}
                     </div>
 
                     {% if p['ajustes_receita'] %}
-                    <div style="margin-top:6px; font-size:12px; color:#ffd166;">
-                        Ajustes: {{ p['ajustes_receita'] }}
+                    <div style="margin-top:6px; font-size:12px; color:#ffd166; font-size:14px;">
+                        RECEITA/OBS:
+                        <ul style="margin:4px 0; padding-left:16px;">
+                            {% for ajuste in p['ajustes_receita'] %}
+                            <li>
+                                {{ ajuste.insumo_nome }} - {{ ajuste.quantidade }}
+                            </li>
+                            {% endfor %}
+                        </ul>
                     </div>
                     {% endif %}
 
@@ -344,4 +328,3 @@
 </div>
 
 {% endblock %}
-

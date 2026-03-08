@@ -4,12 +4,10 @@ from werkzeug.routing import BuildError
 import routes_web
 from datetime import datetime, date
 
-
-
 from werkzeug.security import generate_password_hash
 
-
 from collections import defaultdict
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
 
@@ -87,6 +85,7 @@ def logout():
         return redirect(url_for('login'))
 
 
+# LISTAS
 @app.route('/pessoas', methods=['GET'])
 def pessoas():
     retorno = verificar_token()
@@ -177,7 +176,6 @@ def lanches():
 
 
 @app.route('/insumos', methods=['GET'])
-@app.route('/insumos', methods=['GET'])
 def insumos():
     try:
         retorno = verificar_token()
@@ -190,7 +188,7 @@ def insumos():
 
         # 🔹 PARÂMETROS
         page = request.args.get('page', 1, type=int)
-        per_page = 4
+        per_page = 5
 
         id_insumo = request.args.get('id_insumo')
 
@@ -267,8 +265,6 @@ def categorias():
     )
 
 
-
-
 @app.route('/pedidos', methods=['GET'])
 def pedidos():
     retorno = verificar_token()
@@ -289,8 +285,6 @@ def pedidos():
 
     # 🔥 DATA DE HOJE
     data_hoje = date.today()
-
-
 
     pedidos = var_pedidos['pedidos']
 
@@ -319,7 +313,6 @@ def pedidos():
     pedidos_agrupados = defaultdict(list)
 
     for pedido in pedidos_filtrados:
-
         # extrai horário da mesma string da data
         horario_formatado = pedido['data_pedido'][11:16]
 
@@ -383,6 +376,7 @@ def bebidas():
         return render_template('bebidas.html', bebidas=var_bebidas['bebidas'], exibir_tabela=exibir_tabela,
                                exibir_todos=exibir_todos, categorias=categorias['categorias'])
     flash('Parece que algo ocorreu errado :/', 'error')
+    print(bebidas)
     return redirect(url_for('bebidas'))
 
 
@@ -514,23 +508,7 @@ def lanche_insumos():
         return redirect(url_for(session['funcao_rota_anterior']))
 
 
-@app.route('/deletar_lanche_insumo/<int:lanche_id>/<int:insumo_id>', methods=['POST'])
-def deletar_lanche_insumo(lanche_id, insumo_id):
-    print("aaaaaaaaaaa")
-    retorno = verificar_token()
-    if retorno:
-        return retorno
-
-    resultado = routes_web.delete_lanche_insumo(session['token'], lanche_id, insumo_id)
-
-    if not resultado or "error" in resultado:
-        flash(resultado.get("error", "Erro ao deletar relação!"), "error")
-    else:
-        flash("Relação deletada com sucesso!", "success")
-
-    return redirect(url_for('lanche_insumos'))
-
-# Cadastrar Receita
+# CADASTROS
 @app.route('/lanche_insumos/cadastrar', methods=['GET', 'POST'])
 def cadastrar_lanche_insumos():
     retorno = verificar_token()
@@ -764,9 +742,6 @@ def cadastrar_categorias():
         return render_template('cadastrar_categorias.html')
 
 
-
-
-
 @app.route("/formulario_teste")
 def formulario_teste():
     return render_template("formulario_teste.html")
@@ -836,13 +811,7 @@ def faturamento():
     return render_template("faturamento.html")
 
 
-
-@app.route("/vendas_hoje_por_funcionario")
-def vendas_hoje_por_funcionario():
-    return render_template("vendas_hoje_por_funcionario.html")
-
-
-
+# GRÁFICOS
 @app.route("/dados_grafico_vendas")
 def dados_grafico_vendas():
     if 'token' not in session:
@@ -851,6 +820,7 @@ def dados_grafico_vendas():
     dados = routes_web.get_graficos_vendas(session['token'])
 
     return jsonify(dados)
+
 
 @app.route("/dados_grafico_funcionarios")
 def dados_grafico_funcionarios():
@@ -862,19 +832,14 @@ def dados_grafico_funcionarios():
     return jsonify(dados)
 
 
-
 @app.route("/dados_grafico_funcionarios_mes")
 def dados_grafico_funcionarios_mes():
     if 'token' not in session:
         return jsonify({"erro": "Sem login"}), 401
 
     dados = routes_web.get_vendas_mes_por_funcionario(session['token'])
-    print(dados)
-    return jsonify(dados)
 
-# @app.route('/vendas_por_usuario')
-# def vendas_usuario():
-#     return render_template('grafico_usuario.html')
+    return jsonify(dados)
 
 
 @app.route('/venda_por_mes')
@@ -882,49 +847,12 @@ def venda_mes():
     return render_template('grafico_mensal.html')
 
 
-
-#
-# original do dener
-# @app.route('/editar_pessoa/<int:id_pessoa>', methods=['GET', 'POST'])
-# def editar_pessoa(id_pessoa):
-#     print("aaaaaaaaaa")
-#     try:
-#         retorno = verificar_token()
-#         if retorno:
-#             return retorno
-#         if session['papel'] != "admin" and session['user_id'] != id_pessoa:
-#             flash('Você não tem acesso, entre com uma conta autorizada', 'info')
-#             return redirect(url_for(session['funcao_rota_anterior']))
-#         pessoa = routes_web.get_pessoa_by_id(session['token'], id_pessoa)
-#         pessoa = pessoa['pessoa']
-#         if request.method == 'POST':
-#             if session['papel'] == "admin":
-#                 papel = request.form.get('papel')
-#                 salario = int(request.form.get('salario'))
-#
-#                 if session['user_id'] == id_pessoa:
-#                     senha = request.form.get('senha')
-#                     email = request.form.get('email')
-#                     routes_web.put_editar_pessoa(session['token'], id_pessoa, pessoa['nome_pessoa'], pessoa['cpf'], salario, papel, generate_password_hash(senha), email, pessoa['status'])
-#                 else:
-#                     status = request.form.get('status')
-#                     routes_web.put_editar_pessoa(session['token'], id_pessoa, pessoa['nome_pessoa'], pessoa['cpf'], salario, papel, pessoa['senha'], pessoa['email'], status)
-#
-#             else:
-#                 email = request.form.get('email')
-#                 senha = request.form.get('senha')
-#                 routes_web.put_editar_pessoa(session['token'], id_pessoa, pessoa['nome_pessoa'], pessoa['cpf'], pessoa['salario'], pessoa['papel'], generate_password_hash(senha), email, pessoa['status'])
-#         else:
-#             session['funcao_rota_anterior'] = 'pessoas'
-#             return render_template('editar_pessoa_1.html', pessoa=pessoa)
-#
-#     except Exception as erro:
-#         print(f'será que é esse erro?{erro}')
-#         flash('Parece que algo deu errado', 'error')
-#         return redirect(url_for(session['funcao_rota_anterior']))
+@app.route("/vendas_hoje_por_funcionario")
+def vendas_hoje_por_funcionario():
+    return render_template("vendas_hoje_por_funcionario.html")
 
 
-
+# EDITARES
 @app.route('/editar_pessoa/<id_pessoa>', methods=['GET', 'POST'])
 def editar_pessoa(id_pessoa):
     try:
@@ -951,7 +879,7 @@ def editar_pessoa(id_pessoa):
             return redirect(url_for(session.get('funcao_rota_anterior', 'index')))
 
         # Busca pessoa (verifica retorno)
-        print("a: ",id_pessoa_int)
+        print("a: ", id_pessoa_int)
         resposta = routes_web.get_pessoa_by_id(session['token'], id_pessoa_int)
         if not resposta or 'pessoa' not in resposta:
             flash('Não foi possível obter dados da pessoa', 'error')
@@ -1005,7 +933,7 @@ def editar_pessoa(id_pessoa):
             resultado = routes_web.put_editar_pessoa(
                 session['token'],
                 id_pessoa_int,
-                pessoa.get('nome_pessoa'),   # você não altera nome no form, mantém
+                pessoa.get('nome_pessoa'),  # você não altera nome no form, mantém
                 pessoa.get('cpf'),
                 salario,
                 papel,
@@ -1034,62 +962,6 @@ def editar_pessoa(id_pessoa):
         return redirect(url_for(session.get('funcao_rota_anterior', 'pessoas')))
 
 
-
-
-
-# @app.route('/editar_pessoa/<id_pessoa>', methods=['GET', 'POST'])
-# def editar_pessoa(id_pessoa):
-#     # Garante um valor padrão seguro para a rota anterior
-#     # Isso é CRUCIAL para evitar o BuildError/404 no bloco 'except'
-#     if 'funcao_rota_anterior' not in session:
-#         session['funcao_rota_anterior'] = 'index'  # Fallback seguro
-#
-#     try:
-#         retorno = verificar_token()
-#         if retorno:
-#             return retorno
-#
-#         # --- Lógica de Segurança (Início) ---
-#         # NOTE: Assumindo que 'admin' e 'user_id' e 'papel' estão na sessão
-#         # Para fins de demonstração, setando valores se não existirem
-#         if 'papel' not in session: session['papel'] = 'admin'
-#         if 'user_id' not in session: session['user_id'] = '1'
-#
-#         if session['papel'] != "admin" and session['user_id'] != id_pessoa:
-#             flash('Você não tem acesso, entre com uma conta autorizada', 'info')
-#             # Neste ponto, se 'funcao_rota_anterior' for inválida, dará erro.
-#             # Garantimos o fallback no 'except' abaixo.
-#             return redirect(url_for(session['funcao_rota_anterior']))
-#         # --- Lógica de Segurança (Fim) ---
-#
-#         pessoa = routes_web.get_pessoa_by_id(session['token'], id_pessoa)
-#         pessoa = pessoa['pessoa']
-#
-#         if request.method == 'POST':
-#             # ... toda a sua lógica de POST ...
-#             # Se o POST for bem-sucedido, redirecionar para a rota de listagem 'pessoas'
-#             flash('Funcionário editado com sucesso!', 'success')
-#             return redirect(url_for('pessoas'))
-#
-#         else:  # request.method == 'GET'
-#             # Só define 'pessoas' como rota anterior ao exibir o formulário.
-#             session['funcao_rota_anterior'] = 'pessoas'
-#             return render_template('editar_pessoa.html', pessoa=pessoa)
-#
-#     except BuildError:
-#         # Erro específico do Flask quando a rota em url_for não existe.
-#         print(
-#             f"Erro de Rota (BuildError): O nome da rota '{session.get('funcao_rota_anterior', 'undefined')}' é inválido. Redirecionando para /.")
-#         flash('Erro de Rota. Redirecionado para a página inicial.', 'error')
-#         return redirect(url_for('index'))  # Redireciona para um fallback seguro (ex: rota inicial)
-#
-#     except Exception as erro:
-#         print(erro)
-#         flash('Parece que algo deu errado', 'error')
-#
-#         # Tenta redirecionar para a rota anterior, usando o 'index' como fallback final.
-#         return redirect(url_for(session.get('funcao_rota_anterior', 'index')))
-
 @app.route('/categorias/editar/<int:id_categoria>', methods=['GET', 'POST'])
 def editar_categoria(id_categoria):
     try:
@@ -1107,6 +979,7 @@ def editar_categoria(id_categoria):
         )
 
         categoria = categoria_resp['categoria']
+        print("opa", categoria)
 
         if request.method == 'POST':
             nome = request.form.get('nome_categoria')
@@ -1137,6 +1010,137 @@ def editar_categoria(id_categoria):
         print(erro)
         flash('Parece que algo deu errado', 'error')
         return redirect(url_for(session.get('funcao_rota_anterior', 'categorias')))
+
+
+@app.route('/lanches/editar/<int:id_lanche>', methods=['GET', 'POST'])
+def editar_lanche(id_lanche):
+    print("web editar lanche")
+    try:
+        retorno = verificar_token()
+        if retorno:
+            return retorno
+
+        if session.get('papel') != "admin":
+            flash('Você não tem acesso, entre com uma conta autorizada', 'info')
+            return redirect(url_for(session.get('funcao_rota_anterior', 'lanches')))
+
+        lanche_resp = routes_web.get_lanche_by_id_lanche(
+            session['token'],
+            id_lanche
+        )
+
+        if 'id_lanche' not in lanche_resp:
+            print('RETORNO API:', lanche_resp)
+            flash('lanche não encontrado', 'error')
+            return redirect(url_for('lanches'))
+
+        lanche = lanche_resp
+
+        if request.method == 'POST':
+            valor = request.form.get('valor_lanche')
+            disponibilidade = request.form.get('disponivel')
+            nome = request.form.get('nome_lanche')
+            descricao = request.form.get('descricao_lanche')
+
+            if not valor or not disponibilidade or not nome or not descricao:
+                flash("Todos os campos devem estar preenchidos", "error")
+                return redirect(url_for(
+                    'editar_lanche', id_lanche=id_lanche
+                ))
+
+            routes_web.put_editar_lanche(
+                session['token'],
+                id_lanche,
+                nome,
+                descricao,
+                valor,
+                disponibilidade
+
+            )
+
+            flash("Lanche atualizado com sucesso", "success")
+            return redirect(url_for('lanches'))
+
+        session['funcao_rota_anterior'] = 'lanches'
+        return render_template(
+            'editar_lanche.html',
+            lanche=lanche
+        )
+
+    except Exception as erro:
+        print(erro)
+        flash('Parece que algo deu errado', 'error')
+        return redirect(url_for(session.get('funcao_rota_anterior', 'lanches')))
+
+
+@app.route('/bebidas/editar/<int:id_bebida>', methods=['GET', 'POST'])
+def editar_bebida(id_bebida):
+    print("web cmç bebida")
+    try:
+        retorno = verificar_token()
+        if retorno:
+            return retorno
+
+        if session.get('papel') != "admin":
+            flash('Você não tem acesso, entre com uma conta autorizada', 'info')
+            return redirect(url_for(session.get('funcao_rota_anterior', 'bebidas')))
+
+        bebida_resp = routes_web.get_bebida_by_id_bebida(
+            session['token'],
+            id_bebida
+        )
+
+
+        if 'bebida' not in bebida_resp:
+            print('RETORNO API:', bebida_resp)
+            flash('Bebida não encontrada', 'error')
+            return redirect(url_for('bebidas'))
+
+        bebida = bebida_resp['bebida']
+
+        # categoria
+        categorias_resp = routes_web.get_categorias(session['token'])
+        categorias = categorias_resp.get('categorias', [])
+
+        if request.method == 'POST':
+            valor = request.form.get('valor')
+            status_bebida = request.form.get('status_bebida')
+            quantidade = request.form.get('quantidade')
+            descricao = request.form.get('descricao')
+            nome_bebida = request.form.get('nome_bebida')
+            categoria = request.form.get('categoria')
+
+            if not status_bebida or not quantidade or not descricao or not nome_bebida or not categoria:
+                flash("Todos os campos devem ser preenchidos", "error")
+                return redirect(url_for(
+                    'editar_bebida', id_bebida=id_bebida
+                ))
+
+            routes_web.put_editar_bebida(
+                session['token'],
+                id_bebida,
+                nome_bebida,
+                descricao,
+                valor,
+                quantidade,
+                status_bebida,
+                categoria
+            )
+
+            flash("Bebida atualizada com sucesso", "success")
+            return redirect(url_for('bebidas'))
+
+        session['funcao_rota_anterior'] = 'bebidas'
+        return render_template(
+            'editar_bebida.html',
+            bebida=bebida,
+            categorias=categorias
+        )
+
+    except Exception as erro:
+        print(erro)
+        flash('Parece que algo deu errado', 'error')
+        return redirect(url_for(session.get('funcao_rota_anterior', 'bebidas')))
 
 
 @app.route('/insumos/editar/<int:id_insumo>', methods=['GET', 'POST'])
@@ -1203,11 +1207,9 @@ def editar_insumo(id_insumo):
         return redirect(url_for('insumos'))
 
 
-
 # Editar status pedido
 @app.route('/pedido/alterar_status/<int:id_pedido>/<int:novo_status>')
 def alterar_status_pedido(id_pedido, novo_status):
-
     retorno = verificar_token()
     if retorno:
         return retorno
@@ -1219,6 +1221,46 @@ def alterar_status_pedido(id_pedido, novo_status):
     )
 
     return redirect(url_for('pedidos'))
+
+
+# Deletar
+@app.route('/deletar_categoria/<int:id_categoria>', methods=['POST'])
+def deletar_categoria(id_categoria):
+    print("chegou")
+    retorno = verificar_token()
+    if retorno:
+        return retorno
+
+    resultado = routes_web.delete_categoria(
+        session['token'],
+        id_categoria
+
+    )
+
+    if not resultado or "error" in resultado:
+        flash(resultado.get("error", "Erro ao deletar relação!"), "error")
+
+    else:
+        flash("Relação deletada com sucesso!", "success")
+
+    return redirect(url_for('categorias'))
+
+
+@app.route('/deletar_lanche_insumo/<int:lanche_id>/<int:insumo_id>', methods=['POST'])
+def deletar_lanche_insumo(lanche_id, insumo_id):
+    print("aaaaaaaaaaa")
+    retorno = verificar_token()
+    if retorno:
+        return retorno
+
+    resultado = routes_web.delete_lanche_insumo(session['token'], lanche_id, insumo_id)
+
+    if not resultado or "error" in resultado:
+        flash(resultado.get("error", "Erro ao deletar relação!"), "error")
+    else:
+        flash("Relação deletada com sucesso!", "success")
+
+    return redirect(url_for('lanche_insumos'))
 
 
 if __name__ == '__main__':

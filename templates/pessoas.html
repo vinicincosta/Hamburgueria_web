@@ -1,6 +1,7 @@
 {% extends 'inicio.html' %}
 
 {% block content %}
+
 <main class="">
 
     <!-- ================= BARRA DE AÇÕES ================= -->
@@ -20,8 +21,8 @@
         <div style="display:flex;flex-wrap:wrap;gap:20px;">
             {% for p in pessoas %}
             {% if p['papel'] == 'garcom' %}
-            <div class="card-garcom" data-id_pessoa="{{ p['id_pessoa'] }}">
-
+            <div class="card-garcom {% if p['status_pessoa'] == 'Inativo' %}inativo{% endif %}"
+                 data-id_pessoa="{{ p['id_pessoa'] }}">
 
 
                 <div class="card-header">
@@ -29,13 +30,13 @@
                     <div class="info">
                         <div class="nome">{{ p['nome_pessoa'] }}</div>
                         <div class="cargo">Garçom</div>
+                        <div class="cargo"> {{p ['status_pessoa']}}</div>
+
                     </div>
+
                 </div>
+
                 <a href="{{ url_for('editar_pessoa', id_pessoa=p['id_pessoa']) }}" class="btn-editar">Editar</a>
-
-
-
-
 
 
             </div>
@@ -51,7 +52,7 @@
         <div style="display:flex;flex-wrap:wrap;gap:20px;">
             {% for p in pessoas %}
             {% if p['papel'] == 'cozinha' %}
-            <div class="card-cozinha">
+            <div class="card-cozinha {% if p['status_pessoa'] == 'inativo' %} inativo{% endif %}">
                 <div class="card-header">
                     <div class="avatar cozinha-avatar">{{ p['nome_pessoa'][:1] }}</div>
                     <div class="info">
@@ -59,8 +60,7 @@
                         <div class="cargo">Cozinha</div>
 
                     </div>
-                     <a href="{{ url_for('editar_pessoa', id_pessoa=p['id_pessoa']) }}" class="btn-editar">Editar</a>
-
+                    <a href="{{ url_for('editar_pessoa', id_pessoa=p['id_pessoa']) }}" class="btn-editar">Editar</a>
 
 
                 </div>

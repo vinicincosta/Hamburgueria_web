@@ -1,13 +1,12 @@
-
+import token
 from logging import exception
 
 import requests
 
-url = "http://192.168.0.34:5002"
+url = "http://192.168.0.54:5002"
 
 
 def atualizar_status_pedido(token, id_pedido, novo_status):
-
     headers = {
         "Authorization": f"Bearer {token}"
     }
@@ -20,6 +19,7 @@ def atualizar_status_pedido(token, id_pedido, novo_status):
 
     return response.json()
 
+
 def get_bebidas(token_):
     base_url = f"{url}/bebidas"
     response = requests.get(base_url, headers={'Authorization': f'Bearer {token_}'})
@@ -30,7 +30,8 @@ def get_bebidas(token_):
         print(response.json())
         return {'erro': response.status_code}
 
-def get_lanches(token_): # Feito
+
+def get_lanches(token_):  # Feito
     base_url = f"{url}/lanches"
     response = requests.get(base_url, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 200:
@@ -38,7 +39,7 @@ def get_lanches(token_): # Feito
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
 
 
 def get_vendas_hoje_por_funcionario(token):
@@ -63,6 +64,7 @@ def get_vendas_hoje_por_funcionario(token):
             "mensagem": response.text
         }
 
+
 def get_vendas_mes_por_funcionario(token):
     base_url = f"{url}/vendas_valor_por_funcionario_mes"
 
@@ -84,6 +86,8 @@ def get_vendas_mes_por_funcionario(token):
             "erro": response.status_code,
             "mensagem": response.text
         }
+
+
 def get_graficos_vendas(token):
     base_url = f"{url}/dados_grafico"
 
@@ -107,7 +111,7 @@ def get_graficos_vendas(token):
         }
 
 
-def get_insumos(token_): # Feito
+def get_insumos(token_):  # Feito
     base_url = f"{url}/insumos"
     response = requests.get(base_url, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 200:
@@ -115,9 +119,10 @@ def get_insumos(token_): # Feito
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
 
-def get_pedidos(token_): # Feito
+
+def get_pedidos(token_):  # Feito
     base_url = f"{url}/pedidos"
     response = requests.get(base_url, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 200:
@@ -125,7 +130,7 @@ def get_pedidos(token_): # Feito
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
 
 
 def get_receita(token_):
@@ -136,7 +141,8 @@ def get_receita(token_):
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def get_lanche_insumos(token_):
     base_url = f"{url}/lanche_insumos"
@@ -146,9 +152,10 @@ def get_lanche_insumos(token_):
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
 
-def get_categorias(token_): # Feito
+
+def get_categorias(token_):  # Feito
     base_url = f"{url}/categorias"
     response = requests.get(base_url, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 200:
@@ -157,11 +164,10 @@ def get_categorias(token_): # Feito
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
 
 
-
-def get_entradas(token_): # Feito
+def get_entradas(token_):  # Feito
     base_url = f"{url}/entradas"
     response = requests.get(base_url, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 200:
@@ -169,7 +175,8 @@ def get_entradas(token_): # Feito
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def listar_vendas_by_id_mesa(id_mesa, token_):
     base_url = f"{url}/vendas/{id_mesa}"
@@ -179,7 +186,8 @@ def listar_vendas_by_id_mesa(id_mesa, token_):
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def get_vendas(token_):
     base_url = f"{url}/vendas"
@@ -189,9 +197,10 @@ def get_vendas(token_):
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
 
-def get_pessoas(token_): # Feito
+
+def get_pessoas(token_):  # Feito
     base_url = f"{url}/pessoas"
     response = requests.get(base_url, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 200:
@@ -199,7 +208,9 @@ def get_pessoas(token_): # Feito
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
+
 # original
 def get_pessoa_by_id(token_, id_pessoa):
     response = requests.get(f"{url}/id_pessoa/{id_pessoa}", headers={'Authorization': f'Bearer {token_}'})
@@ -211,7 +222,7 @@ def get_pessoa_by_id(token_, id_pessoa):
         return {'erro': response.status_code}
 
 
-def get_categoria_by_id_categoria(token_, id_categoria): # Feito
+def get_categoria_by_id_categoria(token_, id_categoria):  # Feito
     base_url = f"{url}/categorias/categoria{id_categoria}"
     response = requests.get(base_url, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 200:
@@ -220,10 +231,36 @@ def get_categoria_by_id_categoria(token_, id_categoria): # Feito
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def get_insumo_by_id_insumo(token_, id_insumo):
     base_url = f"{url}/get_insumo_id/{id_insumo}"
+    response = requests.get(
+        base_url, headers={'Authorization': f'Bearer {token_}'})
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(response.status_code)
+        print(response.json())
+        return {'erro': response.status_code}
+
+def get_bebida_by_id_bebida(token_, id_bebida):
+    base_url = f"{url}/get_bebida_id/{id_bebida}"
+    response = requests.get(
+        base_url, headers={'Authorization': f'Bearer {token_}'}
+    )
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(response.status_code)
+        print(response.json())
+        return {'erro': response.status_code}
+
+
+def get_lanche_by_id_lanche(token_, id_lanche):
+    base_url = f"{url}/get_lanche_id/{id_lanche}"
     response = requests.get(
         base_url,
         headers={'Authorization': f'Bearer {token_}'}
@@ -237,16 +274,16 @@ def get_insumo_by_id_insumo(token_, id_insumo):
         return {'erro': response.status_code}
 
 
-
-
 def get_id_pessoa_by_token(token_):
     response = requests.get(f"{url}/teste", headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 200:
         return response.json().get("sucesso")
     else:
         print(response.status_code)
-        print({'erro':response.json()})
-        return {'erro':response.status_code}
+        print({'erro': response.json()})
+        return {'erro': response.status_code}
+
+
 # a = get_id_pessoa_by_token('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2NDg4NzMyOCwianRpIjoiN2QwNGFmZmEtYzUwOC00NjllLTk4NWItYzNiNGI0MDhiOTE3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImRAIiwibmJmIjoxNzY0ODg3MzI4LCJjc3JmIjoiMDE5NjczMmEtODE0Yi00MTllLTlhMjktOTAwMTA5NDM0YmQ4IiwiZXhwIjoxNzY0ODg4MjI4fQ.hcEh3jGtF3vssxcouVYTnMKQB5vHhaMJRqOpzl_zL3g')
 # print(a)
 ########################
@@ -287,29 +324,28 @@ def post_bebidas(token, nome_bebida, valor, id_categoria, descricao=None):
     }
 
 
-
 def post_cadastro_pessoas(token_, nome, cpf, email, senha, salario, papel):
     response = requests.post(f"{url}/cadastro_pessoas_login", json={
-        "email":email,
-        "senha":senha,
-        "nome_pessoa":nome,
-        "cpf":cpf,
-        "salario":salario,
-        "papel":papel
+        "email": email,
+        "senha": senha,
+        "nome_pessoa": nome,
+        "cpf": cpf,
+        "salario": salario,
+        "papel": papel
     }, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 201:
         return response.json()
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
 
 
 def post_lanches(token_, nome_lanche, descricao, valor):
     response = requests.post(f"{url}/lanches", json={
-        "nome_lanche":nome_lanche,
-        "descricao_lanche":descricao,
-        "valor_lanche":valor,
+        "nome_lanche": nome_lanche,
+        "descricao_lanche": descricao,
+        "valor_lanche": valor,
 
     }, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 201:
@@ -317,12 +353,13 @@ def post_lanches(token_, nome_lanche, descricao, valor):
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def post_insumos(token_, nome_insumo, custo, categoria_id):
     response = requests.post(f"{url}/insumos", json={
-        "nome_insumo":nome_insumo,
-        "categoria_id":categoria_id,
+        "nome_insumo": nome_insumo,
+        "categoria_id": categoria_id,
         "custo": custo
     }, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 201:
@@ -330,37 +367,40 @@ def post_insumos(token_, nome_insumo, custo, categoria_id):
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def post_entradas_insumos(token_, insumo_id, qtd_entrada, data_entrada, nota_fiscal, valor_entrada):
     response = requests.post(f"{url}/entradas", json={
-        "insumo_id":insumo_id,
-        "qtd_entrada":qtd_entrada,
-        "data_entrada":data_entrada,
-        "nota_fiscal":nota_fiscal,
-        "valor_entrada":valor_entrada
+        "insumo_id": insumo_id,
+        "qtd_entrada": qtd_entrada,
+        "data_entrada": data_entrada,
+        "nota_fiscal": nota_fiscal,
+        "valor_entrada": valor_entrada
     }, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 201:
         return response.json()
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def post_entradas_bebidas(token_, bebida_id, qtd_entrada, data_entrada, nota_fiscal, valor_entrada):
     response = requests.post(f"{url}/entradas", json={
-        "bebida_id":bebida_id,
-        "qtd_entrada":qtd_entrada,
-        "data_entrada":data_entrada,
-        "nota_fiscal":nota_fiscal,
-        "valor_entrada":valor_entrada
+        "bebida_id": bebida_id,
+        "qtd_entrada": qtd_entrada,
+        "data_entrada": data_entrada,
+        "nota_fiscal": nota_fiscal,
+        "valor_entrada": valor_entrada
     }, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 201:
         return response.json()
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def post_lanche_insumos(token_, lanche_id, insumo_id, qtd_insumo):
     response = requests.post(
@@ -380,15 +420,15 @@ def post_lanche_insumos(token_, lanche_id, insumo_id, qtd_insumo):
         return {"error": f"Erro inesperado ({response.status_code})"}
 
 
-
 def post_categorias(token_, nome_categoria):
-    response = requests.post(f"{url}/categorias", json={"nome_categoria":nome_categoria}, headers={'Authorization': f'Bearer {token_}'})
+    response = requests.post(f"{url}/categorias", json={"nome_categoria": nome_categoria},
+                             headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 201:
         return response.json()
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
 
 
 def post_login(email, password):
@@ -398,7 +438,7 @@ def post_login(email, password):
     else:
         print(response.status_code)
         print(response)
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
 
 
 ########################################
@@ -413,7 +453,8 @@ def put_fechar_mesa(token_, numero_mesa):
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def put_editar_status_pedidos(token_, id_pedido, status_pedido):
     response = requests.put(f"{url}/pedidos/{id_pedido}", json={"status_pedido": status_pedido},
@@ -423,20 +464,24 @@ def put_editar_status_pedidos(token_, id_pedido, status_pedido):
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
 
-def put_editar_lanche(token_, id_lanche, nome_lanche, descricao_lanche, valor_lanche):
+
+def put_editar_lanche(token_, id_lanche, nome_lanche, descricao_lanche, valor_lanche, disponivel):
     response = requests.put(f"{url}/lanches/{id_lanche}", json={
-        "nome_lanche":nome_lanche,
-        "descricao_lanche":descricao_lanche,
-        "valor_lanche":valor_lanche
+        "nome_lanche": nome_lanche,
+        "descricao_lanche": descricao_lanche,
+        "valor_lanche": valor_lanche,
+        "disponivel": disponivel,
+
     }, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 200:
         return response.json()
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def put_editar_insumo(token_, id_insumo, nome_insumo, categoria_id):
     response = requests.put(
@@ -445,8 +490,7 @@ def put_editar_insumo(token_, id_insumo, nome_insumo, categoria_id):
             "nome_insumo": nome_insumo,
             "categoria_id": categoria_id,
         },
-        headers={'Authorization': f'Bearer {token_}'}
-    )
+        headers={'Authorization': f'Bearer {token_}'})
 
     if response.status_code in (200, 201):
         return response.json()
@@ -458,17 +502,40 @@ def put_editar_insumo(token_, id_insumo, nome_insumo, categoria_id):
     print('TEXT:', response.text)
     return {'erro': response.status_code}
 
+def put_editar_bebida(token_, id_bebida, nome_bebida, descricao, valor, quantidade, status_bebida, categoria):
+    response = requests.put(
+        f"{url}/bebidas/{id_bebida}",
+        json={
+            "nome_bebida": nome_bebida,
+            "descricao": descricao,
+            "valor": valor,
+            "quantidade": quantidade,
+            "status_bebida": status_bebida,
+            "categoria": categoria,
+        },
+        headers={'Authorization': f'Bearer {token_}'}
+    )
+
+    print("STATUS:", response.status_code)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print("BODY:", response.text)
+        return {'erro': response.status_code}
+
 
 def put_editar_categoria(token_, id_categoria, nome_categoria):
     response = requests.put(f"{url}/categorias/{id_categoria}", json={
-        "nome_categoria":nome_categoria
+        "nome_categoria": nome_categoria
     }, headers={'Authorization': f'Bearer {token_}'})
     if response.status_code == 200:
         return response.json()
     else:
         print(response.status_code)
         print(response.json())
-        return {'erro':response.status_code}
+        return {'erro': response.status_code}
+
 
 def put_editar_pessoa(token_, id_pessoa, nome_pessoa, cpf, salario, papel, senha_hash, email, status):
     payload = {
@@ -502,6 +569,7 @@ def put_editar_pessoa(token_, id_pessoa, nome_pessoa, cpf, salario, papel, senha
     else:
         return {"erro": response.status_code, "resposta": resp_json}
 
+
 def delete_lanche_insumo(token_, lanche_id, insumo_id):
     response = requests.delete(
         f"{url}/lanche_insumo",
@@ -519,3 +587,14 @@ def delete_lanche_insumo(token_, lanche_id, insumo_id):
         return {"error": f"Erro inesperado ({response.status_code})"}
 
 
+def delete_categoria(token_, id_categoria):
+    response = requests.delete(
+        f"{url}/deletar_categoria/{id_categoria}", headers={'Authorization': f'Bearer {token_}'})
+
+    if response.status_code == 200:
+        return response.json()
+
+    try:
+        return response.json()
+    except:
+        return {"error": f"Erro inesperado ({response.status_code})"}

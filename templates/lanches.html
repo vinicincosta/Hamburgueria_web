@@ -49,12 +49,17 @@
 
     <div class="cards-area">
 
+
         {% for l in lanches %}
         {% set ativo = (l['disponivel'] in ['True', True]) %}
 
         <div class="card-lanche
              {% if not ativo %}card-desativado{% endif %}
              {% if not ativo and exibir not in ['True', True] %}card-oculto{% endif %}">
+            <a href="{{ url_for('editar_lanche', id_lanche=l['id_lanche']) }}"
+                   class="btn-editar">
+                    Editar
+                </a>
 
             <div class="card-id">#{{ l['id_lanche'] }}</div>
             <div class="card-nome">{{ l['nome_lanche'] }}</div>
@@ -66,6 +71,8 @@
             <div class="card-preco">
                 R$ {{ "%.2f"|format(l['valor_lanche']) }}
             </div>
+
+
         </div>
 
         {% endfor %}
