@@ -402,10 +402,10 @@ def vendas():
         flash('Parece que algo ocorreu errado :/', 'error')
         return redirect(url_for(session['funcao_rota_anterior']))
 
-    # 🔥 Lista completa recebida da API
+    #  Lista completa recebida da API
     vendas = var_vendas['vendas']
 
-    # 🔥 FILTRAR SOMENTE VENDAS DE HOJE
+    # FILTRAR SOMENTE VENDAS DE HOJE
     vendas_filtradas = []
 
     for venda in vendas:
@@ -417,7 +417,7 @@ def vendas():
         if data_venda == data_hoje:
             vendas_filtradas.append(venda)
 
-    # 🔥 AGORA A PAGINAÇÃO USA A LISTA FILTRADA
+    # AGORA A PAGINAÇÃO USA A LISTA FILTRADA
     total = len(vendas_filtradas)
 
     start = (page - 1) * per_page
@@ -685,7 +685,7 @@ def cadastrar_entradas():
                 session['token'],
                 bebida_id,
                 qtd_entrada,
-                datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 nota_fiscal,
                 valor_entrada
             )
@@ -1115,8 +1115,9 @@ def editar_bebida(id_bebida):
                 return redirect(url_for(
                     'editar_bebida', id_bebida=id_bebida
                 ))
-
+            print("aaaaaaaaaaa")
             routes_web.put_editar_bebida(
+
                 session['token'],
                 id_bebida,
                 nome_bebida,

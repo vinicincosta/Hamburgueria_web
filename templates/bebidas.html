@@ -87,7 +87,27 @@
     .price{font-weight:800;font-size:15px;color:var(--accent-2)}
 
     /* ----- DESATIVADO ----- */
-    .card.inactive{opacity:0.55;filter:grayscale(.2)}
+    .card.inactive{
+      opacity:0.5;
+      filter:grayscale(0.6);
+      position: relative;
+    }
+
+    /* bloqueia interação geral */
+    .card.inactive::before{
+      content: "INDISPONÍVEL";
+
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* mantém botão clicável */
+    .card.inactive .btn-editar{
+      position: relative;
+      z-index: 2;
+      pointer-events: auto;
+    }
+
 
     /* ----- TABELA MODERNA ----- */
     .table-wrap{margin-top:8px;background:var(--card);padding:12px;border-radius:12px}
@@ -140,10 +160,8 @@
                 </div>
 
 
-
             </div>
         </div>
-
 
 
         <!-- CARDS OR TABLE -->
@@ -152,22 +170,24 @@
 
             {% if exibir_todos in ['False', False] %}
             {% for b in bebidas %}
-            {% if b['status_bebida'] in ['True', True] %}
-            <article class="card" data-nome="{{ b['nome_bebida']|lower }}" data-categoria="{{ b['categoria'] }}">
+            <article class="card {% if b['status_bebida'] in [False, 'False'] %}inactive{% endif %}"
+                     data-nome="{{ b['nome_bebida']|lower }}" data-categoria="{{ b['categoria'] }}">
 
-                <div class="top"><a href="{{ url_for('editar_bebida', id_bebida=b['id_bebida']) }}"
-                   class="btn-editar">
-                    Editar
-                </a>
+                <div class="top">
+                    <a href="{{ url_for('editar_bebida', id_bebida=b['id_bebida']) }}" class="btn-editar">
+                        Editar
+                    </a>
 
                     <div class="avatar">{{ b['nome_bebida'][:2]|upper }}</div>
                     <div>
                         <h3>#{{b['id_bebida']}} — {{b['nome_bebida']}}</h3>
+
                         {% for c in categorias %}
                         {% if c['id_categoria'] == b['categoria'] %}
                         <div class="subtitle">{{c['nome_categoria']}}</div>
                         {% endif %}
                         {% endfor %}
+
                     </div>
                 </div>
 
@@ -178,9 +198,10 @@
                     <div style="flex:1"></div>
                     <div class="price">{{b['valor']}} R$</div>
                 </div>
+
             </article>
-            {% endif %}
             {% endfor %}
+
 
             {% else %}
             {% for b in bebidas %}
