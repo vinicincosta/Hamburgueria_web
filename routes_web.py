@@ -11,7 +11,6 @@ def atualizar_status_pedido(token, id_pedido, novo_status):
     headers = {
         "Authorization": f"Bearer {token}"
     }
-
     response = requests.put(
         f"{url}/pedido/status/{id_pedido}",
         json={"status": novo_status},

@@ -1266,6 +1266,5 @@ def deletar_lanche_insumo(lanche_id, insumo_id):
 
     return redirect(url_for('lanche_insumos'))
 
-
 if __name__ == '__main__':
     app.run(debug=True)
