@@ -313,21 +313,24 @@ def pedidos():
     pedidos_agrupados = defaultdict(list)
 
     for pedido in pedidos_filtrados:
-        # extrai horário da mesma string da data
         horario_formatado = pedido['data_pedido'][11:16]
 
-        mesa = pedido.get("numero_da_mesa") or "entrega"
+        mesa = pedido.get("numero_da_mesa")
+        tipo = "delivery" if not mesa else "presencial"
 
-        chave = (mesa, horario_formatado)
+        mesa_exibicao = mesa if mesa else "Delivery"
+
+        chave = (mesa_exibicao, horario_formatado, tipo)
 
         pedidos_agrupados[chave].append(pedido)
 
     pedidos_final = []
 
-    for (mesa, horario), lista in pedidos_agrupados.items():
+    for (mesa, horario, tipo), lista in pedidos_agrupados.items():
         pedidos_final.append({
             "mesa": mesa,
             "horario": horario,
+            "tipo": tipo,  # 🔥 NOVO CAMPO
             "pedidos": lista,
             "status": all(p.get("status", False) for p in lista)
         })

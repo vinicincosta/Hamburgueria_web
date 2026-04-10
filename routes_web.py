@@ -2,8 +2,9 @@ import token
 from logging import exception
 
 import requests
+import os
 
-url = "http://192.168.0.72:5002"
+url = "https://hamburgueriaapi-x67m.onrender.com"
 
 
 def atualizar_status_pedido(token, id_pedido, novo_status):
