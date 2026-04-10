@@ -1,16 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.routing import BuildError
-
 import routes_web
 from datetime import datetime, date
-
 from werkzeug.security import generate_password_hash
-
 from collections import defaultdict
+import os
+
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret'
-
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'dev-secret')
 
 def verificar_token():
     if 'token' not in session:
