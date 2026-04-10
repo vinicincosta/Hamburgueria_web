@@ -8,7 +8,7 @@ import os
 
 
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'dev-secret')
+app.secret_key = os.environ.get('SECRET_KEY')
 
 def verificar_token():
     if 'token' not in session:
