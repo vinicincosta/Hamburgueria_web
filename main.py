@@ -8,8 +8,10 @@ import os
 
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY')
 
+
+# app.secret_key = os.environ.get('SECRET_KEY')
+app.secret_key = 'minha_chave_secreta_123'
 def verificar_token():
     if 'token' not in session:
         flash('Você deve entrar com uma conta para visualizar esta página', 'error')
